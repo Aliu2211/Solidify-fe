@@ -1,0 +1,22 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+button {
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+/* declaring default values */
+:root {
+  --gap: 30px;
+  --color-primary: #3bd858;
+  --color-secondary: #258c38;
+}
+
+body {
+  font-family: Inter, Arial;
+  font-size: 18px;
+}

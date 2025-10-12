@@ -1,18 +1,38 @@
-# React + Vite
+# 🌍 Solidify
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Solidify** is a modern web application designed to help **Tech-based SMEs (Small and Medium Enterprises)** achieve **Net Zero Carbon Emission** goals.  
+It provides intuitive tools and insights to guide businesses toward sustainable, low-carbon growth.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Overview
 
-## React Compiler
+The application welcomes users with a **simple, clean landing page**, featuring the company logo and a brief mission statement.  
+Users can then proceed to the **login page**, where authentication and personalized tools will be accessible.
 
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
+---
 
-Note: This will impact Vite dev & build performances.
+## 🧩 Features
 
-## Expanding the ESLint configuration
+### 🏠 Welcome Page
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- Displays the **Solidify logo** and an introductory message.
+- Highlights the app’s mission:
+  > “An application to help Tech-based SME’s achieve Net Zero Carbon Emission.”
+- Includes a secondary motto:
+  > “Providing the tools to help grow your tech-based SME.”
+- A **“Proceed” button** navigates users to the login page.
+
+### 🔐 Login Page _(in development)_
+
+- Placeholder for user authentication components.
+- Will include:
+  - User credentials input section
+  - Contact information area
+  - App motto section
+
+---
+
+## 🧱 Project Structure
+
+- TBD
