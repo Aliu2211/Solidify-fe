@@ -1,0 +1,124 @@
+/* LEFT SECTION OF PAGE */
+
+.login-page {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  justify-content: center;
+  align-items: center;
+
+  gap: 50px;
+  height: 100vh;
+}
+
+.credentials {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+
+  gap: var(--gap);
+  height: 50vh;
+
+  max-width: 400px;
+}
+
+.credentials input {
+  font-family: inherit;
+  color: inherit;
+  font-size: 14px;
+  padding: 10px;
+  border: 1px solid var(--color-primary);
+  border-radius: 4px;
+  transition: 0.2s;
+}
+
+input[type="password"] {
+  font-size: 10px;
+  padding: 12px;
+}
+
+.logo-login img {
+  width: var(--logo-width);
+}
+
+.form-user-credentials {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  grid-template-columns: 300px;
+
+  gap: 35px;
+}
+
+.form-user-credentials span {
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+}
+
+.form-user-credentials button {
+  width: 80px;
+  border: none;
+  color: #fff;
+  background-color: var(--color-primary);
+  padding: 5px 10px;
+
+  font-size: 16px;
+}
+
+.credentials .contact {
+  text-align: center;
+}
+
+.contact a {
+  color: var(--color-primary);
+}
+/* END OF LEFT SECTION */
+
+/* RIGHT SECTION OF PAGE */
+
+/* come back later to fix bg blur */
+.brief-intro.motto {
+  background-image: url("../assets/login-page.svg");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  backdrop-filter: blur(5px);
+
+  background-color: var(--color-primary);
+
+  height: 70vh;
+  max-width: 600px;
+
+  /* dislplay: flex has already
+  been applied */
+  justify-content: space-around;
+  align-items: center;
+  text-align: center;
+}
+
+.brief-intro.motto img {
+  width: var(--logo-width);
+}
+
+.brief-intro.motto > .text1 {
+  color: #fff;
+  line-height: 1.5;
+  font-weight: 700;
+}
+/* END OF RIGHT SECTION */
+
+/* HOVERS AND FOCUSES */
+
+.credentials input:focus {
+  outline: none;
+  border: 2px solid var(--color-secondary);
+}
+
+.form-user-credentials button:hover {
+  background-color: #fff;
+  color: var(--color-primary);
+}
+
+.contact a:hover {
+  color: var(--color-secondary);
+}

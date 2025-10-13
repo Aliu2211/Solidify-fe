@@ -2,6 +2,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  /* background: black; */
 }
 
 button {
@@ -14,6 +15,7 @@ button {
   --gap: 30px;
   --color-primary: #3bd858;
   --color-secondary: #258c38;
+  --logo-width: 150px;
 }
 
 body {

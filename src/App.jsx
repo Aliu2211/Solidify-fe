@@ -1,18 +1,11 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import darkLogo from "./assets/logo-dark2.svg";
 import welcomePageLogo from "./assets/welcome-page.svg";
-import LoginPage from "./LoginPage";
+import LoginPage from "./components/LoginPage";
 
 function App() {
   return (
-    // // login page (will get back to it later)
-    // <div>
-    //   <UserCredentialsSection />
-    //   <AppMottoSection />
-    // </div>
-
     <div>
       <WelcomePage />
     </div>
@@ -21,8 +14,6 @@ function App() {
 
 // welcome page
 function WelcomePage() {
-  const navigate = useNavigate();
-
   return (
     <div className="welcome-page">
       <span className="logo">
@@ -45,26 +36,21 @@ function WelcomePage() {
       </div>
 
       {/* button navigates to Login page */}
-      <button onClick={() => navigate("/login")} className="button">
+      <Button className="button" nextPage="/login">
         Proceed
-      </button>
+      </Button>
     </div>
   );
 }
 
-// login page (will get back to it later)
+export function Button({ children, className, nextPage }) {
+  const navigate = useNavigate();
 
-// function UserCredentialsSection() {
-//   return (
-
-//     <div>
-//       <div className="logo">Logo</div>
-//       <div className="user-credentials">User Credentials</div>
-//       <div className="contact">Contact Jehiel</div>
-//     </div>
-//   );
-// }
-
-// function AppMottoSection() {}
+  return (
+    <button onClick={() => navigate(nextPage)} className={className}>
+      {children}
+    </button>
+  );
+}
 
 export default App;

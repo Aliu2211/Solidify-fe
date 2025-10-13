@@ -11,8 +11,8 @@
 }
 
 .welcome-page .logo {
-  width: 150px;
   margin-top: var(--gap);
+  width: var(--logo-width);
 }
 
 .welcome-page img {
