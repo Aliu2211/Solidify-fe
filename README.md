@@ -1,14 +1,14 @@
 # 🌍 Solidify
 
-**Solidify** is a modern web application designed to help **Tech-based SMEs (Small and Medium Enterprises)** achieve **Net Zero Carbon Emission** goals.  
-It provides intuitive tools and insights to guide businesses toward sustainable, low-carbon growth.
+**Solidify** is a React-based web application designed to help **Tech-based SMEs (Small and Medium Enterprises)** achieve **Net Zero Carbon Emissions**.  
+It provides tools, dashboards, and resources to guide businesses toward more sustainable operations.
 
 ---
 
 ## 🚀 Overview
 
-The application welcomes users with a **simple, clean landing page**, featuring the company logo and a brief mission statement.  
-Users can then proceed to the **login page**, where authentication and personalized tools will be accessible.
+Solidify begins with a **welcome page** that introduces the mission and purpose of the platform.  
+From there, users can navigate to key pages such as **Login**, **Change Password**, and the **Dashboard**.
 
 ---
 
@@ -16,23 +16,130 @@ Users can then proceed to the **login page**, where authentication and personali
 
 ### 🏠 Welcome Page
 
-- Displays the **Solidify logo** and an introductory message.
-- Highlights the app’s mission:
+- Displays the **Solidify logo** and an introductory message:
   > “An application to help Tech-based SME’s achieve Net Zero Carbon Emission.”
-- Includes a secondary motto:
+- Includes supporting text:
   > “Providing the tools to help grow your tech-based SME.”
-- A **“Proceed” button** navigates users to the login page.
+- Contains a **Proceed** button that routes users to the login page.
 
-### 🔐 Login Page _(in development)_
+### 🔐 Login Page
 
-- Placeholder for user authentication components.
-- Will include:
-  - User credentials input section
-  - Contact information area
-  - App motto section
+- Allows users to access their accounts.
+- Includes form validation and styled input fields.
+- Provides navigation to password reset if needed.
+
+### 🔑 Change Password Page
+
+- Enables users to reset or update their account password securely.
+
+### 📊 Dashboard
+
+- Central hub for authenticated users.
+- Displays key metrics, analytics, and sustainability tools (planned enhancements).
 
 ---
 
 ## 🧱 Project Structure
 
-- TBD
+src/
+│
+├── App.jsx # Root component rendering the WelcomePage and navigation button
+├── main.jsx # Entry point that defines routing and page structure
+│
+├── components/ # Core app pages and UI components
+│ ├── LoginPage.jsx
+│ ├── ChangePassword.jsx
+│ └── Dashboard.jsx
+│
+├── assets/ # SVGs, logos, and static images
+│ ├── logo-dark2.svg
+│ └── welcome-page.svg
+│
+├── styles/ # Page-specific and global stylesheets
+│ ├── WelcomePage.css
+│ ├── LoginPage.css
+│ ├── ChangePassword.css
+│ └── index.css
+│
+└── index.html # Root HTML file
+
+                        ┌───────────────────────┐
+                        │      Solidify App     │
+                        │     (App.jsx Root)    │
+                        └──────────┬────────────┘
+                                   │
+                                   ▼
+                      ┌──────────────────────────┐
+                      │      Welcome Page        │
+                      │  (Intro & Proceed Btn)   │
+                      └──────────┬───────────────┘
+                                 │
+                     navigate("/login")
+                                 │
+                                 ▼
+                      ┌──────────────────────────┐
+                      │       Login Page         │
+                      │  (User Authentication)   │
+                      └──────────┬───────────────┘
+                  ┌──────────────┴───────────────┐
+                  │                              │
+
+navigate("/change-password") navigate("/dashboard")
+│ │
+▼ ▼
+┌──────────────────────────┐ ┌──────────────────────────┐
+│ Change Password Page │ │ Dashboard │
+│ (Reset or Update Pass) │ │ (Insights & Analytics) │
+└──────────────────────────┘ └──────────────────────────┘
+
+---
+
+## ⚙️ Technologies Used
+
+| Category       | Tools                                         |
+| -------------- | --------------------------------------------- |
+| **Framework**  | React 18 (with functional components & hooks) |
+| **Routing**    | React Router DOM                              |
+| **Styling**    | CSS Modules / plain CSS                       |
+| **Build Tool** | Vite                                          |
+| **Assets**     | SVG vector graphics                           |
+
+---
+
+## 🧭 Navigation Flow
+
+Routes are defined in [`main.jsx`](./src/main.jsx):
+
+````jsx
+<Routes>
+  <Route path="/" element={<WelcomePage />} />
+  <Route path="/login" element={<LoginPage />} />
+  <Route path="/change-password" element={<ChangePasssword />} />
+  <Route path="/dashboard" element={<Dashboard />} />
+</Routes>
+
+
+```markdown
+```javascript
+// Import the necessary dependencies
+import { useNavigate } from 'react-router-dom';
+
+// Button component with children, className, and nextPage props
+export function Button({ children, className, nextPage }) {
+  // Initialize the navigate function from react-router-dom
+  const navigate = useNavigate();
+
+  // Return a button element with onClick event handler and className
+  return (
+    <button onClick={() => navigate(nextPage)} className={className}>
+      {children}
+    </button>
+  );
+}
+````
+
+```
+
+This Markdown code includes the necessary dependencies and maintains the original logic and functionality of the Node.js code. The comments are added to explain the purpose of each part of the code.
+
+```
