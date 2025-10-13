@@ -41,28 +41,6 @@ From there, users can navigate to key pages such as **Login**, **Change Password
 
 ## 🧱 Project Structure
 
-src/
-│
-├── App.jsx # Root component rendering the WelcomePage and navigation button
-├── main.jsx # Entry point that defines routing and page structure
-│
-├── components/ # Core app pages and UI components
-│ ├── LoginPage.jsx
-│ ├── ChangePassword.jsx
-│ └── Dashboard.jsx
-│
-├── assets/ # SVGs, logos, and static images
-│ ├── logo-dark2.svg
-│ └── welcome-page.svg
-│
-├── styles/ # Page-specific and global stylesheets
-│ ├── WelcomePage.css
-│ ├── LoginPage.css
-│ ├── ChangePassword.css
-│ └── index.css
-│
-└── index.html # Root HTML file
-
                         ┌───────────────────────┐
                         │      Solidify App     │
                         │     (App.jsx Root)    │
