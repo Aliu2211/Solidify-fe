@@ -61,12 +61,11 @@ From there, users can navigate to key pages such as **Login**, **Change Password
                       └──────────┬───────────────┘
                   ┌──────────────┴───────────────┐
                   │                              │
-   navigate("/change-password")       navigate("/dashboard")
                   │                              │
                   ▼                              ▼
       ┌──────────────────────────┐     ┌──────────────────────────┐
-      │   Change Password Page   │     │        Dashboard          │
-      │ (Reset or Update Pass)   │     │ (Insights & Analytics)    │
+      │   Change Password Page   │     │        Dashboard         │
+      │ (Reset or Update Pass)   │     │ (Insights & Analytics)   │
       └──────────────────────────┘     └──────────────────────────┘
 
 
