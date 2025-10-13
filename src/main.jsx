@@ -7,6 +7,7 @@ import "./index.css";
 import "./styles/WelcomePage.css";
 import "./styles/LoginPage.css";
 import "./styles/ChangePassword.css";
+import "./styles/Dashboard.css";
 
 import WelcomePage from "./App.jsx";
 import LoginPage from "./components/LoginPage.jsx";
@@ -20,7 +21,8 @@ createRoot(document.getElementById("root")).render(
         <Route path="/" element={<WelcomePage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/change-password" element={<ChangePasssword />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+
+        <Route path="/home" element={<Dashboard />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>

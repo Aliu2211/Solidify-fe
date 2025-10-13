@@ -13,7 +13,7 @@ export default function ChangePasssword() {
         firstInputType="password"
         secondLabel="Confirm Password"
         buttonLabel="Proceed"
-        nextPage="/Dashboard"
+        nextPage="/home"
       />
     </div>
   );
