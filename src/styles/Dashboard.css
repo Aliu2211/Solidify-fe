@@ -1,138 +1,94 @@
-/* HEADER STYLE */
-
 .dashboard {
   display: flex;
   flex-direction: column;
 
-  /* gap: 40px; */
+  gap: 60px;
 }
-
-.header {
-  background-color: var(--color-primary);
-
-  height: var(--header-height);
-
-  display: flex;
-  align-items: center;
-
-  position: relative;
-
-  /* gap: 100px; */
-}
-
-.header img {
-  width: var(--logo-width-small);
-}
-
-.search {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-
-  position: absolute;
-  left: 10%;
-  /* top: 20px; */
-}
-
-.search-bar {
-  display: flex;
-  align-items: center;
-
-  position: relative;
-}
-
-.search-bar input {
-  font-size: 16px;
-  padding: 8px 15px;
-
-  border: 2px;
-  font-family: inherit;
-
-  border-radius: 20px;
-
-  transition: all 0.1s;
-}
-
-.search-bar input:focus {
-  outline: none;
-  border: 3px solid var(--color-secondary);
-}
-
-.search-bar span {
-  position: absolute;
-  right: 5px;
-  cursor: pointer;
-  color: var(--color-primary);
-}
-
-.search-bar span:hover {
-  font-variation-settings: "GRAD" 500;
-}
-
-.tabs {
-  display: flex;
-  align-items: center;
-
-  flex-shrink: 0;
-
-  gap: 5px;
-  position: absolute;
-  right: 10%;
-}
-
-.tabs span {
-  font-size: 35px;
-  color: #fff;
-  transition: all 0.3s;
-  cursor: pointer;
-}
-
-.tabs span:hover {
-  font-variation-settings: "GRAD" 500;
-
-  color: #000;
-}
-/* END OF HEADER STYLE */
-
-/* PROFILE PHOTO */
-.profile {
-  /* border-top: 2px solid; */
-
-  background-color: var(--color-primary);
-  position: absolute;
-  top: var(--header-height);
-  left: 0;
-  right: 0;
-
-  border-radius: 100% 100% 10% 10% / 0% 0% 100% 100%;
-
-  height: 40px;
-}
-
-.photo-and-name {
-  position: absolute;
-  left: 40px;
-
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.photo-and-name img {
-  width: 100px;
-  border-radius: 50%;
-}
-
-.photo-and-name span {
-  /* position: absolute; */
-  /* left: 100px; */
-  padding-top: 40px;
-
-  font-size: 15px;
-}
-/* END OF PROFILE PHOTO */
 
 /* BODY (home tab)*/
 .content {
-  padding-top: var(--header-height);
+  margin-top: var(--header-height);
+
+  padding: 20px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 70px;
+}
+
+.roadmap-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+
+  flex: 1;
+}
+
+.roadmap-progress section {
+  display: flex;
+  justify-content: space-between;
+}
+
+.news-in-a-view {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.news-overview {
+  display: flex;
+  /* height: 350px; */
+  gap: 20px;
+
+  /* min-width: 750px; */
+
+  justify-content: center;
+  align-items: start;
+
+  background-color: var(--color-primary);
+
+  padding: 20px 10px;
+}
+
+.news-overview div {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  font-size: 14px;
+  font-weight: 400;
+  color: #fff;
+}
+
+.news-overview img {
+  /* width: 280px; */
+  width: 100%;
+  height: 200px;
+}
+
+.news-text {
+  position: relative;
+}
+
+.news-text button {
+  position: absolute;
+  bottom: -10px;
+  right: 10px;
+
+  border: none;
+  background: none;
+  color: #fff;
+
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.tabs span.selected {
+  font-variation-settings: "FILL" 1;
+  color: black;
+}
+
+.tabs span.selected:hover {
+  font-variation-settings: "FILL" 1;
 }

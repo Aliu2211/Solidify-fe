@@ -8,6 +8,9 @@ import "./styles/WelcomePage.css";
 import "./styles/LoginPage.css";
 import "./styles/ChangePassword.css";
 import "./styles/Dashboard.css";
+import "./styles/Header.css";
+import "./styles/Profile.css";
+import "./styles/Roadmap.css";
 
 import WelcomePage from "./App.jsx";
 import LoginPage from "./components/LoginPage.jsx";

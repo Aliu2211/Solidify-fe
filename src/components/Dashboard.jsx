@@ -1,6 +1,28 @@
+import { Header } from "./Header";
 import { Profile } from "./Profile";
-import { Search } from "./Search";
-import { Tabs } from "./Tabs";
+import { Roadmap } from "./Roadmap";
+
+import { TextExpander } from "./TextExpander";
+
+const newsFeed = [
+  {
+    image: "https://picsum.photos/600/400?random=1",
+    content:
+      "Major technology companies are investing heavily in next-generation artificial intelligence, aiming to surpass current limitations and redefine automation across industries.",
+  },
+  {
+    image: "https://picsum.photos/600/400?random=2",
+    content:
+      "Stock markets worldwide rallied today as new data showed a steady decline in inflation, boosting investor confidence and signaling potential rate cuts.",
+  },
+  {
+    image: "https://picsum.photos/600/400?random=3",
+    content:
+      "Scientists have uncovered new species thriving in the depths of the Pacific, revealing insights into how marine life adapts to extreme conditions.",
+  },
+];
+
+console.log(newsFeed);
 
 export default function Dashboard() {
   return (
@@ -9,26 +31,65 @@ export default function Dashboard() {
         <Profile />
       </Header>
 
-      <Body />
+      <Body>
+        <RoadmapProgress />
+        <NewsInAView />
+      </Body>
     </div>
   );
 }
 
-function Header({ children }) {
+function Body({ children }) {
+  return <div className="content">{children}</div>;
+}
+
+function RoadmapProgress() {
   return (
-    <div className="header">
-      {/* search */}
-      <Search />
+    <div className="roadmap-progress">
+      <span>Roadmap Progress</span>
 
-      {/* icons */}
-      <Tabs />
+      <section>
+        {/* <img src="https://i.pravatar.cc/300" alt="" />
+        <img src="https://i.pravatar.cc/300" alt="" />
+        <img src="https://i.pravatar.cc/300" alt="" />
+        <img src="https://i.pravatar.cc/300" alt="" />
+        <img src="https://i.pravatar.cc/300" alt="" /> */}
 
-      {/* profile */}
-      {children}
+        <Roadmap />
+      </section>
     </div>
   );
 }
 
-function Body() {
-  return <div className="content"></div>;
+function NewsInAView() {
+  return (
+    <div className="news-in-a-view">
+      <span>News in a View</span>
+      <section className="news-overview">
+        {newsFeed.map((news) => (
+          <News news={news} />
+        ))}
+      </section>
+    </div>
+  );
+}
+
+function News({ news }) {
+  return (
+    <div>
+      <img src={news.image} alt="image" />
+      <span>
+        {
+          <TextExpander
+            expandButtonText="Read More"
+            collapseButtonText="Read Less"
+            collapsedNumWords={7}
+            className="news-text"
+          >
+            {news.content}
+          </TextExpander>
+        }
+      </span>
+    </div>
+  );
 }

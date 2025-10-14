@@ -1,13 +1,43 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
+const tabs = [
+  "home",
+  "newsstand",
+  "relax",
+  "menu_book",
+  "chat",
+  "crowdsource",
+  "settings",
+];
+
 export function Tabs() {
+  const [selected, setSelected] = useState("home");
+
+  function handleSelection(tab) {
+    setSelected(tab);
+  }
+
   return (
     <section className="tabs">
-      <span class="material-symbols-outlined">home</span>
-      <span class="material-symbols-outlined ">newsstand</span>
-      <span class="material-symbols-outlined ">relax</span>
-      <span class="material-symbols-outlined ">menu_book</span>
-      <span class="material-symbols-outlined ">chat</span>
-      <span class="material-symbols-outlined ">crowdsource</span>
-      <span class="material-symbols-outlined ">settings</span>
+      {tabs.map((tab) => (
+        <Tab selected={selected} onSelection={handleSelection}>
+          {tab}
+        </Tab>
+      ))}
     </section>
+  );
+}
+
+function Tab({ children, onSelection, selected }) {
+  const isSelected = selected === children;
+
+  return (
+    <span
+      className={`material-symbols-outlined ${isSelected && "selected"}`}
+      onClick={() => onSelection(children)}
+    >
+      {children}
+    </span>
   );
 }
