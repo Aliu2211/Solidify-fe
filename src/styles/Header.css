@@ -73,16 +73,47 @@
   right: 10%;
 }
 
-.tabs span {
+.tabs > span {
   font-size: 35px;
   color: #fff;
   transition: all 0.3s;
   cursor: pointer;
+
+  position: relative;
 }
 
-.tabs span:hover {
+.tabs > span .tooltip {
+  font-family: Inter;
+  font-size: 13px;
+  position: absolute;
+  background-color: var(--color-secondary);
+  color: white;
+  padding: 5px 10px;
+  bottom: -28px;
+  left: -60%;
+  white-space: nowrap;
+  border-radius: 3px;
+
+  opacity: 0;
+
+  z-index: 1;
+
+  /* disables opacity when hovering
+  over tooltip itself */
+  pointer-events: none;
+  transition: all 0.2s;
+}
+
+/* HOVERS */
+
+.tabs > span:hover {
   font-variation-settings: "GRAD" 500;
 
   color: #000;
 }
+
+.tabs > span:hover .tooltip {
+  opacity: 0.8;
+}
+
 /* END OF HEADER STYLE */

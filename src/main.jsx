@@ -11,11 +11,13 @@ import "./styles/Dashboard.css";
 import "./styles/Header.css";
 import "./styles/Profile.css";
 import "./styles/Roadmap.css";
+import "./styles/NewsSection.css";
 
 import WelcomePage from "./App.jsx";
 import LoginPage from "./components/LoginPage.jsx";
 import ChangePasssword from "./components/ChangePassword.jsx";
 import Dashboard from "./components/Dashboard.jsx";
+import NewsSection from "./components/NewsSection.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -26,6 +28,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="/change-password" element={<ChangePasssword />} />
 
         <Route path="/home" element={<Dashboard />} />
+        <Route path="/news" element={<NewsSection />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>

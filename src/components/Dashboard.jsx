@@ -1,8 +1,7 @@
 import { Header } from "./Header";
+import { News } from "./News";
 import { Profile } from "./Profile";
 import { Roadmap } from "./Roadmap";
-
-import { TextExpander } from "./TextExpander";
 
 const newsFeed = [
   {
@@ -22,8 +21,6 @@ const newsFeed = [
   },
 ];
 
-console.log(newsFeed);
-
 export default function Dashboard() {
   return (
     <div className="dashboard">
@@ -31,7 +28,7 @@ export default function Dashboard() {
         <Profile />
       </Header>
 
-      <Body>
+      <Body className="home">
         <RoadmapProgress />
         <NewsInAView />
       </Body>
@@ -39,8 +36,8 @@ export default function Dashboard() {
   );
 }
 
-function Body({ children }) {
-  return <div className="content">{children}</div>;
+export function Body({ children, className }) {
+  return <div className={`content ${className}`}>{children}</div>;
 }
 
 function RoadmapProgress() {
@@ -70,26 +67,6 @@ function NewsInAView() {
           <News news={news} />
         ))}
       </section>
-    </div>
-  );
-}
-
-function News({ news }) {
-  return (
-    <div>
-      <img src={news.image} alt="image" />
-      <span>
-        {
-          <TextExpander
-            expandButtonText="Read More"
-            collapseButtonText="Read Less"
-            collapsedNumWords={7}
-            className="news-text"
-          >
-            {news.content}
-          </TextExpander>
-        }
-      </span>
     </div>
   );
 }
