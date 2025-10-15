@@ -23,7 +23,7 @@
   gap: 10px;
 
   position: absolute;
-  left: 10%;
+  left: 5%;
   /* top: 20px; */
 }
 
@@ -70,7 +70,7 @@
 
   gap: 5px;
   position: absolute;
-  right: 10%;
+  right: 5%;
 }
 
 .tabs > span {

@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 
 import darkLogo from "./assets/logo-dark2.svg";
 import welcomePageLogo from "./assets/welcome-page.svg";
-import LoginPage from "./components/LoginPage";
 
 function App() {
   return (

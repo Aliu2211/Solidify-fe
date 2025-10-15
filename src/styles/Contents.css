@@ -1,0 +1,65 @@
+.contents {
+  display: grid;
+  grid-template-columns: 250px auto;
+
+  column-gap: 50px;
+}
+
+.contents > div {
+  background-color: gray;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 25px;
+  padding: 20px;
+}
+
+.contents > div h6 {
+  /* background-color: aqua; */
+  text-align: center;
+  position: relative;
+}
+
+.contents > div h6::before,
+.contents > div h6::after {
+  position: absolute;
+
+  top: calc(50% - 1px);
+  content: "";
+  display: block;
+
+  border: 1px solid;
+  border-radius: 20px;
+  width: 25px;
+}
+
+.contents > div h6::before {
+  left: 6%;
+}
+
+.contents > div h6::after {
+  right: 6%;
+}
+
+.contents > div section {
+  display: flex;
+  flex-direction: column;
+
+  gap: 20px;
+}
+
+.contents > div h5 {
+  transition: all 0.2s;
+  cursor: pointer;
+}
+
+.contents > div h5:hover,
+.contents > div h5.selected {
+  color: #fff;
+}
+
+.contents p {
+  padding: 20px;
+  background-color: blue;
+}

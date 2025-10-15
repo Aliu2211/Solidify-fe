@@ -19,8 +19,8 @@ const tabs = [
   },
   {
     icon: "menu_book",
-    page: "/knowledge-base",
-    tooltip: "Knowledge",
+    page: "/library",
+    tooltip: "Library",
   },
   {
     icon: "chat",
@@ -29,8 +29,8 @@ const tabs = [
   },
   {
     icon: "crowdsource",
-    page: "/people",
-    tooltip: "People",
+    page: "/find-SME",
+    tooltip: "Find SME",
   },
   {
     icon: "settings",
@@ -39,10 +39,7 @@ const tabs = [
   },
 ];
 
-// setting default selected tab for each page route
-let defaultTab = "home";
-
-export function Tabs() {
+export function Tabs({ defaultTab }) {
   const [selected, setSelected] = useState(defaultTab);
 
   function handleSelection(tab) {
@@ -76,7 +73,6 @@ function Tab({ children, onSelection, selected, page, tooltip }) {
       onClick={() => {
         navigate(page);
         onSelection(children);
-        defaultTab = children;
       }}
     >
       {children}

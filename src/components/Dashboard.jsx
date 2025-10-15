@@ -24,7 +24,7 @@ const newsFeed = [
 export default function Dashboard() {
   return (
     <div className="dashboard">
-      <Header>
+      <Header defaultTab="home">
         <Profile />
       </Header>
 

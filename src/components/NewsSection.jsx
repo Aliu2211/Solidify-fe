@@ -53,7 +53,7 @@ const newsData = [
 export default function NewsSection() {
   return (
     <div className="news-section">
-      <Header />
+      <Header defaultTab="newsstand" />
       <Body className="news">
         <Heading>News</Heading>
         <NewsRows />
@@ -62,7 +62,7 @@ export default function NewsSection() {
   );
 }
 
-function Heading({ children }) {
+export function Heading({ children }) {
   const headingStyle = {
     display: "flex",
     alignItems: "center",
