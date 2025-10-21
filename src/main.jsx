@@ -14,13 +14,15 @@ import "./styles/Roadmap.css";
 import "./styles/NewsSection.css";
 import "./styles/Sustainability.css";
 import "./styles/Contents.css";
+import "./styles/Library.css";
 
 import WelcomePage from "./App.jsx";
 import LoginPage from "./components/LoginPage.jsx";
 import ChangePasssword from "./components/ChangePassword.jsx";
-import Dashboard from "./components/Dashboard.jsx";
+import Dashboard, { DashboardLayout } from "./components/Dashboard.jsx";
 import NewsSection from "./components/NewsSection.jsx";
 import Sustainability from "./components/Sustainability.jsx";
+import Library from "./components/Library.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -30,9 +32,12 @@ createRoot(document.getElementById("root")).render(
         <Route path="/login" element={<LoginPage />} />
         <Route path="/change-password" element={<ChangePasssword />} />
 
-        <Route path="/home" element={<Dashboard />} />
-        <Route path="/news" element={<NewsSection />} />
-        <Route path="/sustainability-choices" element={<Sustainability />} />
+        <Route path="/dashboard" element={<DashboardLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="news" element={<NewsSection />} />
+          <Route path="sustainability-choices" element={<Sustainability />} />
+          <Route path="library" element={<Library />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   </StrictMode>

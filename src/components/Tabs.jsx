@@ -4,37 +4,37 @@ import { useNavigate } from "react-router-dom";
 const tabs = [
   {
     icon: "home",
-    page: "/home",
+    page: "/dashboard",
     tooltip: "Dashboard",
   },
   {
     icon: "newsstand",
-    page: "/news",
+    page: "/dashboard/news",
     tooltip: "News Section",
   },
   {
     icon: "relax",
-    page: "/sustainability-choices",
+    page: "/dashboard/sustainability-choices",
     tooltip: "Sustainability",
   },
   {
     icon: "menu_book",
-    page: "/library",
+    page: "/dashboard/library",
     tooltip: "Library",
   },
   {
     icon: "chat",
-    page: "/chat",
+    page: "/dashboard/chat",
     tooltip: "Chat",
   },
   {
     icon: "crowdsource",
-    page: "/find-SME",
+    page: "/dashboard/find-SME",
     tooltip: "Find SME",
   },
   {
     icon: "settings",
-    page: "/settings",
+    page: "/dashboard/settings",
     tooltip: "Settings",
   },
 ];

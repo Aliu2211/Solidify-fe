@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useRef } from "react";
 
 import { Button } from "../App";
 
@@ -44,7 +45,7 @@ export function UserCredentialsSection({
 
         <span>
           <label>{secondLabel}</label>
-          <input type={secondInputType} required />
+          <input id="input" type={secondInputType} required />
         </span>
 
         {/* fix navigation later */}

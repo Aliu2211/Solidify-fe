@@ -1,6 +1,6 @@
 import { TextExpander } from "./TextExpander";
 
-export function News({ news, className }) {
+export function Feed({ feedItem, className }) {
   const newsStyle = {
     display: "flex",
     flexDirection: "column",
@@ -12,15 +12,15 @@ export function News({ news, className }) {
 
   return (
     <div style={newsStyle} className={className}>
-      <img src={news.image} alt="image" />
+      <img src={feedItem.image} alt="image" />
       <span>
         {
           <TextExpander
-            expandButtonText="Read More"
+            expandButtonText="View Full Title"
             collapseButtonText="Read Less"
             collapsedNumWords={8}
           >
-            {news.content}
+            {feedItem.title}
           </TextExpander>
         }
       </span>
