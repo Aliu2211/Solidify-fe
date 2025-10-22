@@ -10,7 +10,18 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+      },
+    },
+  },
   server: {
+    historyApiFallback: true, // Enable SPA routing for dev server
     proxy: {
       '/api': {
         target: 'https://solidify.onrender.com',
@@ -29,5 +40,9 @@ export default defineConfig({
         },
       }
     }
+  },
+  preview: {
+    port: 4173,
+    host: true,
   }
 })

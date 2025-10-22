@@ -33,6 +33,7 @@ import Chat from "./components/Chat.jsx";
 import FindSME from "./components/FindSME.jsx";
 import Settings from "./components/Settings.jsx";
 import ProtectedRoute from "./components/common/ProtectedRoute.jsx";
+import NotFound from "./components/NotFound.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -123,6 +124,9 @@ createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
+        
+        {/* Catch-all route for 404 */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
