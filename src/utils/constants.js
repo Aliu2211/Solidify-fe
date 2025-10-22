@@ -1,6 +1,7 @@
 // API Configuration
-// Using production URL for backend
-const API_BASE_URL = 'https://solidify.onrender.com/api/v1';
+const API_BASE_URL = import.meta.env.PROD 
+  ? 'https://solidify.onrender.com/api/v1'
+  : '/api/v1'; // Use proxy in development
 
 // Storage Keys
 export const STORAGE_KEYS = {

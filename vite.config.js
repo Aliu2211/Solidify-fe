@@ -10,4 +10,13 @@ export default defineConfig({
       },
     }),
   ],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://solidify.onrender.com',
+        changeOrigin: true,
+        secure: true,
+      }
+    }
+  }
 })
