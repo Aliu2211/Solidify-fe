@@ -1,62 +1,231 @@
-/* copied from gpt */
-.rm {
-  /* padding: 40px; */
-
+/* ===== ROADMAP PROGRESS INDICATOR ===== */
+.roadmap-progress-indicator {
   position: relative;
-  height: calc(var(--dot) * 2);
-  /* padding-inline: calc(var(--dot) / 2); */
-
-  /* one “period” per gap between dot centers */
-  --period: calc(100% / (var(--steps) - 1));
-  --dash: calc(var(--period) * var(--dash-ratio));
-
-  background-color: var(--color-primary);
+  width: 100%;
+  padding: 40px 20px;
+  min-height: 100px;
 }
 
-/* dashed connector behind the dots */
-.rm::before {
-  content: "";
+/* ===== LINE CONTAINER ===== */
+.roadmap-line-container {
+  position: relative;
+  width: 100%;
+  height: 8px;
+  margin: 0 auto;
+}
+
+/* Background line */
+.roadmap-line-bg {
   position: absolute;
-  left: calc(var(--dot) / 2);
-  right: calc(var(--dot) / 2);
-  top: 50%;
-  height: var(--line-h);
-  transform: translateY(-50%);
-  border-radius: 999px;
-  background: repeating-linear-gradient(
-    to right,
-    var(--line-color) 0 var(--dash),
-    transparent var(--dash) var(--period)
-  );
-  z-index: 0;
-}
-
-/* dots */
-.rm-dots {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+  width: 100%;
   height: 100%;
-  display: grid;
-  grid-template-columns: repeat(var(--steps), 1fr);
-  align-items: center;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+}
+
+/* Progress line with animation */
+.roadmap-line-progress {
+  position: absolute;
+  height: 100%;
+  background: white;
+  border-radius: 10px;
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+}
+
+/* ===== DOTS CONTAINER ===== */
+.roadmap-dots-container {
   position: relative;
-  z-index: 1; /* keep dots above the dashed line */
-
-  display: flex;
-  gap: 30px;
+  width: 100%;
+  height: 60px;
+  margin-top: -4px;
 }
 
-.rm-dot {
-  justify-self: center;
-  width: var(--dot);
-  height: var(--dot);
+/* ===== DOT WRAPPER ===== */
+.roadmap-dot-wrapper {
+  position: absolute;
+  transform: translateX(-50%);
+  transition: all 0.3s ease;
+}
+
+.roadmap-dot {
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: var(--dot-color);
-  box-shadow: inset 0 0 0 4px #2a2a2a; /* optional ring */
+  background: rgba(255, 255, 255, 0.3);
+  border: 4px solid rgba(255, 255, 255, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  color: white;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
 }
 
-.rm-dot.done {
-  /* style completed steps if you want */
-  background: var(--dot--color);
+.roadmap-dot span {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* ===== COMPLETED STATE ===== */
+.roadmap-dot-wrapper.completed .roadmap-dot {
+  background: white;
+  border-color: white;
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.4);
+  animation: completePopIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes completePopIn {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Check icon */
+.roadmap-check {
+  width: 24px;
+  height: 24px;
+  stroke-width: 3;
+  color: var(--color-primary);
+  animation: checkDraw 0.5s ease-in-out;
+}
+
+@keyframes checkDraw {
+  0% {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+  }
+  100% {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ===== ACTIVE STATE (Next milestone) ===== */
+.roadmap-dot-wrapper.active .roadmap-dot {
+  background: white;
+  border-color: white;
+  transform: scale(1.15);
+  box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.2),
+              0 4px 20px rgba(255, 255, 255, 0.4);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.roadmap-dot-wrapper.active .roadmap-dot span {
+  color: var(--color-primary);
+}
+
+/* Pulse animation */
+.roadmap-pulse {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  opacity: 0;
+  z-index: 1;
+}
+
+.roadmap-dot-wrapper.active .roadmap-pulse {
+  animation: pulseRing 2s ease-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1.15);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+}
+
+@keyframes pulseRing {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+/* ===== HOVER EFFECTS ===== */
+.roadmap-dot-wrapper:hover .roadmap-dot {
+  transform: scale(1.2);
+}
+
+.roadmap-dot-wrapper.completed:hover .roadmap-dot {
+  box-shadow: 0 6px 25px rgba(255, 255, 255, 0.6);
+}
+
+.roadmap-dot-wrapper.active:hover .roadmap-dot {
+  box-shadow: 0 0 0 12px rgba(255, 255, 255, 0.2),
+              0 6px 30px rgba(255, 255, 255, 0.5);
+}
+
+/* Incomplete dots */
+.roadmap-dot-wrapper:not(.completed):not(.active) .roadmap-dot {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.roadmap-dot-wrapper:not(.completed):not(.active):hover .roadmap-dot {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+@media (max-width: 768px) {
+  .roadmap-progress-indicator {
+    padding: 30px 10px;
+  }
+
+  .roadmap-dot {
+    width: 36px;
+    height: 36px;
+    font-size: 14px;
+  }
+
+  .roadmap-dot span {
+    font-size: 15px;
+  }
+
+  .roadmap-check {
+    width: 20px;
+    height: 20px;
+  }
+
+  .roadmap-pulse {
+    width: 36px;
+    height: 36px;
+  }
+
+  .roadmap-line-container {
+    height: 6px;
+  }
+}
+
+/* ===== ACCESSIBILITY ===== */
+.roadmap-dot:focus {
+  outline: 2px solid white;
+  outline-offset: 4px;
+}
+
+.roadmap-dot-wrapper.completed .roadmap-dot:focus {
+  outline-color: var(--color-secondary);
 }
