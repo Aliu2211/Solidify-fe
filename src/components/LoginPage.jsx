@@ -1,19 +1,37 @@
 import { useState } from "react";
-
-import { Button } from "../App";
+import { useNavigate } from "react-router-dom";
+import useAuthStore from "../stores/authStore";
+import LoadingSpinner from "./common/LoadingSpinner";
 
 import darkLogo from "../assets/logo-dark.svg";
 import whiteLogo from "../assets/logo-white.svg";
 
 export default function LoginPage() {
+  const [identifier, setIdentifier] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const { login, isLoading } = useAuthStore();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const result = await login(identifier, password);
+
+    if (result.success) {
+      // Navigate to home page on successful login
+      navigate("/home");
+    }
+  };
+
   return (
     <div className="login-page">
       <UserCredentialsSection
-        firstLabel="User ID"
-        firstInputType="email"
-        secondLabel="Password"
-        buttonLabel="Sign In"
-        nextPage="/change-password"
+        identifier={identifier}
+        setIdentifier={setIdentifier}
+        password={password}
+        setPassword={setPassword}
+        onSubmit={handleSubmit}
+        isLoading={isLoading}
       />
       <AppMottoSection>SME Carbon Management Towards Net Zero</AppMottoSection>
     </div>
@@ -22,12 +40,12 @@ export default function LoginPage() {
 
 // Left section of Page
 export function UserCredentialsSection({
-  firstLabel,
-  firstInputType,
-  secondLabel,
-  secondInputType = "password",
-  buttonLabel,
-  nextPage,
+  identifier,
+  setIdentifier,
+  password,
+  setPassword,
+  onSubmit,
+  isLoading,
   className,
 }) {
   return (
@@ -36,19 +54,34 @@ export function UserCredentialsSection({
         <img src={darkLogo} alt="dark-logo" />
       </span>
 
-      <form className="form-user-credentials">
+      <form className="form-user-credentials" onSubmit={onSubmit}>
         <span>
-          <label>{firstLabel}</label>
-          <input type={firstInputType} required />
+          <label>User ID or Email</label>
+          <input
+            type="text"
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
+            placeholder="Enter your User ID or Email"
+            required
+            disabled={isLoading}
+          />
         </span>
 
         <span>
-          <label>{secondLabel}</label>
-          <input type={secondInputType} required />
+          <label>Password</label>
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Enter your password"
+            required
+            disabled={isLoading}
+          />
         </span>
 
-        {/* fix navigation later */}
-        <Button nextPage={nextPage}>{buttonLabel}</Button>
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? <LoadingSpinner size="small" /> : "Sign In"}
+        </button>
       </form>
 
       <div className="contact">
