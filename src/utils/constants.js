@@ -1,7 +1,29 @@
 // API Configuration
-const API_BASE_URL = import.meta.env.PROD 
-  ? 'https://solidify.onrender.com/api/v1'
-  : '/api/v1'; // Use proxy in development
+const getApiBaseUrl = () => {
+  // Check if we have a custom API URL from environment
+  if (import.meta.env.VITE_API_BASE_URL) {
+    return import.meta.env.VITE_API_BASE_URL;
+  }
+  
+  // Production environment - use the full backend URL
+  if (import.meta.env.PROD) {
+    return 'https://solidify.onrender.com/api/v1';
+  }
+  
+  // Development environment - use proxy
+  return '/api/v1';
+};
+
+const API_BASE_URL = getApiBaseUrl();
+
+// Debug logging in development
+if (import.meta.env.DEV) {
+  console.log('🔧 API Configuration:', {
+    baseUrl: API_BASE_URL,
+    environment: import.meta.env.PROD ? 'production' : 'development',
+    customUrl: import.meta.env.VITE_API_BASE_URL || 'not set'
+  });
+}
 
 // Storage Keys
 export const STORAGE_KEYS = {

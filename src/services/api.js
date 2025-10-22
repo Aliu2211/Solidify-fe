@@ -1,7 +1,6 @@
 import axios from 'axios';
 import API_BASE_URL, { API_ENDPOINTS } from '../utils/constants';
 import storage from '../utils/storage';
-import { handleApiError } from '../utils/errorHandler';
 
 /**
  * Create Axios instance with base configuration
@@ -113,8 +112,49 @@ api.interceptors.response.use(
       }
     }
 
+    // Enhanced error handling for CORS and network issues
+    if (!error.response) {
+      // Network error or CORS issue
+      if (error.code === 'ERR_NETWORK' || error.message.includes('CORS')) {
+        console.error('🚫 Network/CORS Error:', {
+          message: error.message,
+          config: {
+            baseURL: error.config?.baseURL,
+            url: error.config?.url,
+            method: error.config?.method
+          }
+        });
+        
+        // Create a more user-friendly error message
+        const corsError = new Error('Unable to connect to the server. This might be a network issue or CORS configuration problem.');
+        corsError.name = 'NetworkError';
+        corsError.originalError = error;
+        return Promise.reject(corsError);
+      }
+    }
+
     return Promise.reject(error);
   }
 );
+
+/**
+ * Health check utility to test API connectivity
+ */
+export const checkApiHealth = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/health`, {
+      timeout: 5000,
+    });
+    return { healthy: true, status: response.status };
+  } catch (error) {
+    console.error('API Health Check Failed:', error.message);
+    return { 
+      healthy: false, 
+      error: error.message,
+      isNetworkError: !error.response,
+      isCorsError: error.message.includes('CORS')
+    };
+  }
+};
 
 export default api;
