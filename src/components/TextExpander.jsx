@@ -4,7 +4,7 @@ export function TextExpander({
   collapsedNumWords = 10,
   expandButtonText = "Show More",
   collapseButtonText = "Show Less",
-  buttonColor = "#fff",
+  buttonColor,
   expanded = false,
   className,
   children,
@@ -12,7 +12,7 @@ export function TextExpander({
   const [isExpanded, setIsExpanded] = useState(expanded);
 
   const buttonStyle = {
-    color: buttonColor,
+    color: buttonColor || "var(--color-primary)",
     position: "absolute",
     bottom: "-17px",
     right: "10px",
