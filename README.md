@@ -75,12 +75,11 @@ It provides insights, visualization tools, and sustainability tracking for bette
 ## 🛠 Installation (Dev Setup)
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/Aliu2211/Solidify-fe.git
    cd Solidify-fe
    ```
-
-````
 
 2. **Switch to the `dev` branch**
 
@@ -180,16 +179,16 @@ function App() {
 
 **Existing:**
 
-* `Header.jsx` – Navigation bar
-* `Footer.jsx` – Footer section
-* `Button.jsx` – Reusable button styles
-* `Card.jsx` – For dashboard info and stats
+- `Header.jsx` – Navigation bar
+- `Footer.jsx` – Footer section
+- `Button.jsx` – Reusable button styles
+- `Card.jsx` – For dashboard info and stats
 
 **Under Development:**
 
-* `ImageScroller.jsx` – Horizontal scrollable gallery using CSS `calc()` and scroll-snap
-* `EmissionChart.jsx` – Visualization for emission data
-* `StatsOverview.jsx` – Metrics summary component
+- `ImageScroller.jsx` – Horizontal scrollable gallery using CSS `calc()` and scroll-snap
+- `EmissionChart.jsx` – Visualization for emission data
+- `StatsOverview.jsx` – Metrics summary component
 
 ### Example Horizontal Scroll CSS
 
@@ -211,8 +210,8 @@ function App() {
 
 ## 🎨 Styling & UI Standards
 
-* **CSS Modules** for scoped styles
-* Global variables defined in `:root`
+- **CSS Modules** for scoped styles
+- Global variables defined in `:root`
 
   ```css
   :root {
@@ -220,12 +219,14 @@ function App() {
     --text-color: #1a1a1a;
   }
   ```
-* **Layout principles**
 
-  * Use `display: grid` or `flex` for layout
-  * Responsive with `minmax()` and `calc()`
-  * Consistent border radius, spacing, and shadows
-* **Naming convention:**
+- **Layout principles**
+
+  - Use `display: grid` or `flex` for layout
+  - Responsive with `minmax()` and `calc()`
+  - Consistent border radius, spacing, and shadows
+
+- **Naming convention:**
   Components → `PascalCase`
   Classes → `camelCase`
 
@@ -233,11 +234,11 @@ function App() {
 
 ## 🧑‍💻 Development Notes
 
-* Always run `npm run lint` before committing
-* Maintain accessibility (semantic HTML + ARIA)
-* Optimize and lazy-load large images
-* Use `.env` files for sensitive configs
-* Use `React.StrictMode` during dev for debugging
+- Always run `npm run lint` before committing
+- Maintain accessibility (semantic HTML + ARIA)
+- Optimize and lazy-load large images
+- Use `.env` files for sensitive configs
+- Use `React.StrictMode` during dev for debugging
 
 ---
 
@@ -247,10 +248,10 @@ function App() {
 | -------------------------- | ------------------------------------------ | -------------- |
 | 🌿 Carbon Tracker          | Visualize real-time emissions data         | 🧩 In progress |
 | 🧮 Analytics Dashboard     | Graphs & charts for sustainability metrics | 🔄 Planned     |
-| 📈 Horizontal Image Scroll | Showcase sustainability efforts            | ✅ Prototype    |
+| 📈 Horizontal Image Scroll | Showcase sustainability efforts            | ✅ Prototype   |
 | 👥 User Profiles           | Manage user-specific sustainability goals  | 🔄 Planned     |
-| 🗄 Data Persistence        | Backend API integration                    | 🚧 Under setup |
-| 🧑‍💼 Admin Panel          | Management dashboard for organizations     | 🕓 Scheduled   |
+| 🗄 Data Persistence         | Backend API integration                    | 🚧 Under setup |
+| 🧑‍💼 Admin Panel             | Management dashboard for organizations     | 🕓 Scheduled   |
 
 ---
 
@@ -262,11 +263,13 @@ function App() {
    ```bash
    git checkout -b feature/your-feature-name
    ```
+
 3. Commit and push your changes
 
    ```bash
    git push origin feature/your-feature-name
    ```
+
 4. Submit a pull request to `dev` branch
 
 ---
@@ -288,9 +291,5 @@ See the `LICENSE` file for details.
 
 ---
 
-> 🧠 *This document applies to the `dev` branch of the Solidify frontend repository.
-> For production-ready instructions, refer to the `main` branch README.*
-
-```
-
-````
+> 🧠 _This document applies to the `dev` branch of the Solidify frontend repository.
+> For production-ready instructions, refer to the `main` branch README._
