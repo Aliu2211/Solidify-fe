@@ -21,6 +21,8 @@ import "./styles/Contents.css";
 import "./styles/Chat.css";
 import "./styles/FindSME.css";
 import "./styles/Settings.css";
+import "./styles/LibrarySection.css";
+import "./styles/LibraryItem.css";
 import "./styles/Library.css";
 
 import WelcomePage from "./App.jsx";
@@ -30,7 +32,8 @@ import Dashboard from "./components/Dashboard.jsx";
 import NewsSection from "./components/NewsSection.jsx";
 import NewsDetail from "./components/NewsDetail.jsx";
 import Sustainability from "./components/Sustainability.jsx";
-import Library from "./components/Library.jsx";
+import LibrarySection from "./components/LibrarySection.jsx";
+import LibraryDetail from "./components/LibraryDetail.jsx";
 import Chat from "./components/Chat.jsx";
 import FindSME from "./components/FindSME.jsx";
 import Settings from "./components/Settings.jsx";
@@ -102,6 +105,25 @@ createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/library"
+          element={
+            <ProtectedRoute>
+              <LibrarySection />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="library/:id"
+          element={
+            <ProtectedRoute>
+              <LibraryDetail />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/chat"
           element={
@@ -123,14 +145,6 @@ createRoot(document.getElementById("root")).render(
           element={
             <ProtectedRoute>
               <Settings />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/library"
-          element={
-            <ProtectedRoute>
-              <Library />
             </ProtectedRoute>
           }
         />

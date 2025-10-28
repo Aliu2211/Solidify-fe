@@ -23,8 +23,8 @@
   border-radius: 30px;
 }
 
-/* ===== NEWS SECTION PAGE ===== */
-.news {
+/* ===== LIBRARY SECTION PAGE ===== */
+.library {
   display: flex;
   flex-direction: column;
   gap: 32px;
@@ -34,7 +34,7 @@
 }
 
 /* ===== PAGE HEADER ===== */
-.news-page-header {
+.library-page-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -50,11 +50,11 @@
   animation: slideInDown 0.6s ease-out;
 }
 
-.news-page-title-section {
+.library-page-title-section {
   flex: 1;
 }
 
-.news-page-title {
+.library-page-title {
   font-size: 36px;
   font-weight: 800;
   color: white;
@@ -62,7 +62,7 @@
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.news-page-subtitle {
+.library-page-subtitle {
   font-size: 16px;
   color: rgba(255, 255, 255, 0.95);
   margin: 0;
@@ -70,12 +70,12 @@
   max-width: 600px;
 }
 
-.news-stats {
+.library-stats {
   display: flex;
   gap: 24px;
 }
 
-.news-stat-item {
+.library-stat-item {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -87,16 +87,16 @@
   transition: all 0.3s ease;
 }
 
-.news-stat-item:hover {
+.library-stat-item:hover {
   background: rgba(255, 255, 255, 0.25);
   transform: translateY(-2px);
 }
 
-.news-stat-item .stat-icon {
+.library-stat-item .stat-icon {
   font-size: 32px;
 }
 
-.news-stat-item .stat-label {
+.library-stat-item .stat-label {
   font-size: 12px;
   color: rgba(255, 255, 255, 0.9);
   margin: 0 0 4px 0;
@@ -105,7 +105,7 @@
   font-weight: 600;
 }
 
-.news-stat-item .stat-value {
+.library-stat-item .stat-value {
   font-size: 24px;
   font-weight: 700;
   color: white;
@@ -113,7 +113,7 @@
 }
 
 /* ===== FILTER SECTION ===== */
-.news-filter-section {
+.library-filter-section {
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -121,11 +121,11 @@
 }
 
 /* Search Container */
-.news-search-container {
+.library-search-container {
   width: 100%;
 }
 
-.news-search-wrapper {
+.library-search-wrapper {
   position: relative;
   max-width: 600px;
   margin: 0 auto;
@@ -141,7 +141,7 @@
   opacity: 0.6;
 }
 
-.news-search-input {
+.library-search-input {
   width: 100%;
   padding: 16px 56px 16px 56px;
   font-size: 16px;
@@ -152,12 +152,12 @@
   outline: none;
 }
 
-.news-search-input:focus {
+.library-search-input:focus {
   border-color: var(--color-primary);
   box-shadow: 0 0 0 4px rgba(59, 216, 88, 0.1);
 }
 
-.news-search-input::placeholder {
+.library-search-input::placeholder {
   color: #9ca3af;
 }
 
@@ -187,7 +187,7 @@
 }
 
 /* Category Pills */
-.news-category-pills {
+.library-category-pills {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
@@ -234,7 +234,7 @@
 }
 
 /* ===== RESULTS HEADER ===== */
-.news-results-header {
+.library-results-header {
   padding: 16px 24px;
   background: white;
   border-radius: 12px;
@@ -254,8 +254,8 @@
   font-weight: 700;
 }
 
-/* ===== NEWS GRID ===== */
-.news-grid-page {
+/* ===== LIBRARY GRID ===== */
+.library-grid-page {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
   gap: 28px;
@@ -263,7 +263,7 @@
 }
 
 /* ===== LOADING STATE ===== */
-.news-loading-container {
+.library-loading-container {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -272,7 +272,7 @@
 }
 
 /* ===== EMPTY STATE ===== */
-.news-empty-state {
+.library-empty-state {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -367,65 +367,65 @@
 
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 1024px) {
-  .news-page-header {
+  .library-page-header {
     flex-direction: column;
     text-align: center;
   }
 
-  .news-page-title-section {
+  .library-page-title-section {
     text-align: center;
   }
 
-  .news-page-subtitle {
+  .library-page-subtitle {
     margin: 0 auto;
   }
 
-  .news-stats {
+  .library-stats {
     width: 100%;
     justify-content: center;
   }
 
-  .news-grid-page {
+  .library-grid-page {
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: 24px;
   }
 }
 
 @media (max-width: 768px) {
-  .news {
+  .library {
     padding: 16px;
     gap: 24px;
   }
 
-  .news-page-header {
+  .library-page-header {
     padding: 24px;
   }
 
-  .news-page-title {
+  .library-page-title {
     font-size: 28px;
   }
 
-  .news-page-subtitle {
+  .library-page-subtitle {
     font-size: 14px;
   }
 
-  .news-stats {
+  .library-stats {
     flex-direction: column;
     gap: 12px;
     width: 100%;
   }
 
-  .news-stat-item {
+  .library-stat-item {
     width: 100%;
     justify-content: center;
   }
 
-  .news-search-input {
+  .library-search-input {
     font-size: 14px;
     padding: 14px 48px 14px 48px;
   }
 
-  .news-category-pills {
+  .library-category-pills {
     gap: 8px;
   }
 
@@ -434,7 +434,7 @@
     font-size: 13px;
   }
 
-  .news-grid-page {
+  .library-grid-page {
     grid-template-columns: 1fr;
     gap: 20px;
   }
@@ -454,10 +454,10 @@
 
 /* ===== ACCESSIBILITY ===== */
 @media (prefers-reduced-motion: reduce) {
-  .news-page-header,
-  .news-filter-section,
-  .news-results-header,
-  .news-grid-page {
+  .library-page-header,
+  .library-filter-section,
+  .library-results-header,
+  .library-grid-page {
     animation: none;
   }
 
