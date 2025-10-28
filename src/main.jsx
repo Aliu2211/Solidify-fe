@@ -21,6 +21,7 @@ import "./styles/Contents.css";
 import "./styles/Chat.css";
 import "./styles/FindSME.css";
 import "./styles/Settings.css";
+import "./styles/Library.css";
 
 import WelcomePage from "./App.jsx";
 import LoginPage from "./components/LoginPage.jsx";
@@ -29,6 +30,7 @@ import Dashboard from "./components/Dashboard.jsx";
 import NewsSection from "./components/NewsSection.jsx";
 import NewsDetail from "./components/NewsDetail.jsx";
 import Sustainability from "./components/Sustainability.jsx";
+import Library from "./components/Library.jsx";
 import Chat from "./components/Chat.jsx";
 import FindSME from "./components/FindSME.jsx";
 import Settings from "./components/Settings.jsx";
@@ -124,7 +126,15 @@ createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
-        
+        <Route
+          path="/library"
+          element={
+            <ProtectedRoute>
+              <Library />
+            </ProtectedRoute>
+          }
+        />
+
         {/* Catch-all route for 404 */}
         <Route path="*" element={<NotFound />} />
       </Routes>
