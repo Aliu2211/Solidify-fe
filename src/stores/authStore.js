@@ -84,6 +84,34 @@ const useAuthStore = create(
         }
       },
 
+      forgotPassword: async (email) => {
+        set({ isLoading: true, error: null });
+        try {
+          const response = await authService.forgotPassword(email);
+          set({ isLoading: false, error: null });
+          handleApiSuccess('Password reset link sent to your email!');
+          return { success: true, message: response.message };
+        } catch (error) {
+          const errorMessage = handleApiError(error);
+          set({ isLoading: false, error: errorMessage });
+          return { success: false, error: errorMessage };
+        }
+      },
+
+      resetPassword: async (token, newPassword) => {
+        set({ isLoading: true, error: null });
+        try {
+          const response = await authService.resetPassword(token, newPassword);
+          set({ isLoading: false, error: null });
+          handleApiSuccess('Password reset successful! You can now login.');
+          return { success: true, message: response.message };
+        } catch (error) {
+          const errorMessage = handleApiError(error);
+          set({ isLoading: false, error: errorMessage });
+          return { success: false, error: errorMessage };
+        }
+      },
+
       logout: () => {
         storage.clearAll();
         set({

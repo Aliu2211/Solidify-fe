@@ -102,26 +102,21 @@ const useLibraryStore = create((set, get) => ({
     }
   },
 
-  // View a resource
-  viewResource: async (id) => {
+  // Favorite a resource
+  favoriteResource: async (id) => {
     set({ error: null });
     try {
-      const response = await libraryService.viewResource(id);
+      const response = await libraryService.favoriteResource(id);
       if (response.success) {
-        // Update the resource in the list to reflect new view count
-        const resources = get().resources.map((resource) =>
-          resource._id === id
-            ? { ...resource, views: (resource.views || 0) + 1 }
-            : resource
-        );
-        set({ resources });
+        // Refresh favorites
+        await get().fetchMyFavorites();
         return response;
       } else {
         set({ error: response.message });
         return response;
       }
     } catch (error) {
-      const errorMsg = error.response?.data?.message || "Failed to view resource";
+      const errorMsg = error.response?.data?.message || "Failed to favorite resource";
       set({ error: errorMsg });
       return {
         success: false,
@@ -130,21 +125,21 @@ const useLibraryStore = create((set, get) => ({
     }
   },
 
-  // Save/bookmark a resource
-  saveResource: async (id) => {
+  // Unfavorite a resource
+  unfavoriteResource: async (id) => {
     set({ error: null });
     try {
-      const response = await libraryService.saveResource(id);
+      const response = await libraryService.unfavoriteResource(id);
       if (response.success) {
-        // Refresh saved resources
-        await get().fetchMySavedResources();
+        // Refresh favorites
+        await get().fetchMyFavorites();
         return response;
       } else {
         set({ error: response.message });
         return response;
       }
     } catch (error) {
-      const errorMsg = error.response?.data?.message || "Failed to save resource";
+      const errorMsg = error.response?.data?.message || "Failed to unfavorite resource";
       set({ error: errorMsg });
       return {
         success: false,
@@ -153,34 +148,11 @@ const useLibraryStore = create((set, get) => ({
     }
   },
 
-  // Unsave/unbookmark a resource
-  unsaveResource: async (id) => {
+  // Fetch my favorite resources
+  fetchMyFavorites: async () => {
     set({ error: null });
     try {
-      const response = await libraryService.unsaveResource(id);
-      if (response.success) {
-        // Refresh saved resources
-        await get().fetchMySavedResources();
-        return response;
-      } else {
-        set({ error: response.message });
-        return response;
-      }
-    } catch (error) {
-      const errorMsg = error.response?.data?.message || "Failed to unsave resource";
-      set({ error: errorMsg });
-      return {
-        success: false,
-        message: errorMsg,
-      };
-    }
-  },
-
-  // Fetch my saved resources
-  fetchMySavedResources: async () => {
-    set({ error: null });
-    try {
-      const response = await libraryService.getMySavedResources();
+      const response = await libraryService.getMyFavorites();
       if (response.success) {
         set({ savedResources: response.data });
         return response.data;
@@ -190,27 +162,25 @@ const useLibraryStore = create((set, get) => ({
       }
     } catch (error) {
       set({
-        error: error.response?.data?.message || "Failed to fetch saved resources",
+        error: error.response?.data?.message || "Failed to fetch favorites",
       });
       return [];
     }
   },
 
-  // Download a resource
-  downloadResource: async (id, filename) => {
+  // Download a resource (get download URL - increments download count)
+  downloadResource: async (id) => {
     set({ error: null });
     try {
-      const blob = await libraryService.downloadResource(id);
-      // Create a download link
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = filename || "resource";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-      return { success: true };
+      const response = await libraryService.downloadResource(id);
+      if (response.success && response.data.downloadUrl) {
+        // Open download URL in new tab or trigger download
+        window.open(response.data.downloadUrl, "_blank", "noopener,noreferrer");
+        return response;
+      } else {
+        set({ error: response.message || "Download URL not available" });
+        return response;
+      }
     } catch (error) {
       const errorMsg = error.response?.data?.message || "Failed to download resource";
       set({ error: errorMsg });

@@ -44,6 +44,27 @@ class AuthService {
   }
 
   /**
+   * Request password reset (forgot password)
+   */
+  async forgotPassword(email) {
+    const response = await api.post(API_ENDPOINTS.FORGOT_PASSWORD, {
+      email,
+    });
+    return response.data;
+  }
+
+  /**
+   * Reset password with token
+   */
+  async resetPassword(token, newPassword) {
+    const response = await api.post(API_ENDPOINTS.RESET_PASSWORD, {
+      token,
+      newPassword,
+    });
+    return response.data;
+  }
+
+  /**
    * Get current user profile
    */
   async getCurrentUser() {
