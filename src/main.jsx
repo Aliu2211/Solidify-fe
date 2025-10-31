@@ -25,12 +25,14 @@ import "./styles/Library.css";
 
 import WelcomePage from "./App.jsx";
 import LoginPage from "./components/LoginPage.jsx";
+import ForgotPassword from "./components/ForgotPassword.jsx";
+import ResetPassword from "./components/ResetPassword.jsx";
 import ChangePasssword from "./components/ChangePassword.jsx";
 import Dashboard from "./components/Dashboard.jsx";
 import NewsSection from "./components/NewsSection.jsx";
 import NewsDetail from "./components/NewsDetail.jsx";
 import Sustainability from "./components/Sustainability.jsx";
-import Library from "./components/Library.jsx";
+import LibrarySection from "./components/LibrarySection.jsx";
 import Chat from "./components/Chat.jsx";
 import FindSME from "./components/FindSME.jsx";
 import Settings from "./components/Settings.jsx";
@@ -67,6 +69,8 @@ createRoot(document.getElementById("root")).render(
       <Routes>
         <Route path="/" element={<WelcomePage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/change-password" element={<ChangePasssword />} />
 
         {/* Protected Routes */}
@@ -102,6 +106,16 @@ createRoot(document.getElementById("root")).render(
             </ProtectedRoute>
           }
         />
+
+        <Route
+          path="/library"
+          element={
+            <ProtectedRoute>
+              <LibrarySection />
+            </ProtectedRoute>
+          }
+        />
+
         <Route
           path="/chat"
           element={
@@ -123,14 +137,6 @@ createRoot(document.getElementById("root")).render(
           element={
             <ProtectedRoute>
               <Settings />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/library"
-          element={
-            <ProtectedRoute>
-              <Library />
             </ProtectedRoute>
           }
         />
