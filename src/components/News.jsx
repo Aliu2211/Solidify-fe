@@ -18,11 +18,13 @@ export function News({ news, className, onClick }) {
 
   return (
     <article
-      className={`news-card ${className || ''}`}
+      className={`news-card ${className || ""}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       onClick={handleClick}
-      style={{ cursor: onClick || news.slug || news._id ? 'pointer' : 'default' }}
+      style={{
+        cursor: onClick || news.slug || news._id ? "pointer" : "default",
+      }}
     >
       {/* Image Container with Overlay */}
       <div className="news-image-container">
@@ -34,21 +36,20 @@ export function News({ news, className, onClick }) {
         <img
           src={news.image}
           alt={news.title || "News image"}
-          className={`news-image ${imageLoaded ? 'loaded' : ''}`}
+          className={`news-image ${imageLoaded ? "loaded" : ""}`}
           onLoad={() => setImageLoaded(true)}
           onError={(e) => {
-            e.target.src = "https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?w=600&h=400&fit=crop";
+            e.target.src =
+              "https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?w=600&h=400&fit=crop";
             setImageLoaded(true);
           }}
         />
-        <div className={`news-overlay ${isHovered ? 'hovered' : ''}`}></div>
+        <div className={`news-overlay ${isHovered ? "hovered" : ""}`}></div>
       </div>
 
       {/* Content */}
       <div className="news-content">
-        {news.title && (
-          <h3 className="news-title">{news.title}</h3>
-        )}
+        {news.title && <h3 className="news-title">{news.title}</h3>}
 
         <div className="news-text">
           <TextExpander

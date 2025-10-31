@@ -47,7 +47,8 @@ function PageHeader() {
       <div className="news-page-title-section">
         <h1 className="news-page-title">Sustainability News</h1>
         <p className="news-page-subtitle">
-          Stay informed with the latest sustainability trends, policies, and success stories
+          Stay informed with the latest sustainability trends, policies, and
+          success stories
         </p>
       </div>
       <div className="news-stats">
@@ -55,7 +56,9 @@ function PageHeader() {
           <span className="stat-icon">📰</span>
           <div>
             <p className="stat-label">Articles</p>
-            <p className="stat-value" id="total-articles">...</p>
+            <p className="stat-value" id="total-articles">
+              ...
+            </p>
           </div>
         </div>
         <div className="news-stat-item">
@@ -71,14 +74,27 @@ function PageHeader() {
 }
 
 // Enhanced Filter Section with Search
-function FilterSection({ selectedCategory, setSelectedCategory, searchQuery, setSearchQuery }) {
+function FilterSection({
+  selectedCategory,
+  setSelectedCategory,
+  searchQuery,
+  setSearchQuery,
+}) {
   const categories = [
     { value: "", label: "All News", icon: "📋" },
     { value: NEWS_CATEGORIES.POLICY, label: "Policy", icon: "⚖️" },
     { value: NEWS_CATEGORIES.TECHNOLOGY, label: "Technology", icon: "💻" },
-    { value: NEWS_CATEGORIES.SUCCESS_STORIES, label: "Success Stories", icon: "🏆" },
+    {
+      value: NEWS_CATEGORIES.SUCCESS_STORIES,
+      label: "Success Stories",
+      icon: "🏆",
+    },
     { value: NEWS_CATEGORIES.EVENTS, label: "Events", icon: "📅" },
-    { value: NEWS_CATEGORIES.GLOBAL_TRENDS, label: "Global Trends", icon: "🌐" },
+    {
+      value: NEWS_CATEGORIES.GLOBAL_TRENDS,
+      label: "Global Trends",
+      icon: "🌐",
+    },
   ];
 
   return (
@@ -111,7 +127,9 @@ function FilterSection({ selectedCategory, setSelectedCategory, searchQuery, set
         {categories.map((cat) => (
           <button
             key={cat.value}
-            className={`category-pill ${selectedCategory === cat.value ? 'active' : ''}`}
+            className={`category-pill ${
+              selectedCategory === cat.value ? "active" : ""
+            }`}
             onClick={() => setSelectedCategory(cat.value)}
           >
             <span className="pill-icon">{cat.icon}</span>
@@ -133,7 +151,7 @@ function NewsRows({ selectedCategory, searchQuery }) {
 
   // Update article count in header
   useEffect(() => {
-    const countElement = document.getElementById('total-articles');
+    const countElement = document.getElementById("total-articles");
     if (countElement && pagination.total !== undefined) {
       countElement.textContent = pagination.total;
     }
@@ -161,7 +179,9 @@ function NewsRows({ selectedCategory, searchQuery }) {
         <div className="empty-state-content">
           <span className="empty-state-icon">📰</span>
           <h3>No news articles available</h3>
-          <p>Check back later for the latest sustainability updates and insights.</p>
+          <p>
+            Check back later for the latest sustainability updates and insights.
+          </p>
         </div>
       </div>
     );
@@ -189,9 +209,20 @@ function NewsRows({ selectedCategory, searchQuery }) {
     <>
       <div className="news-results-header">
         <p className="results-count">
-          Showing <strong>{filteredNews.length}</strong> article{filteredNews.length !== 1 ? 's' : ''}
-          {selectedCategory && <span> in <strong>{selectedCategory}</strong></span>}
-          {searchQuery && <span> matching "<strong>{searchQuery}</strong>"</span>}
+          Showing <strong>{filteredNews.length}</strong> article
+          {filteredNews.length !== 1 ? "s" : ""}
+          {selectedCategory && (
+            <span>
+              {" "}
+              in <strong>{selectedCategory}</strong>
+            </span>
+          )}
+          {searchQuery && (
+            <span>
+              {" "}
+              matching "<strong>{searchQuery}</strong>"
+            </span>
+          )}
         </p>
       </div>
 
@@ -202,7 +233,13 @@ function NewsRows({ selectedCategory, searchQuery }) {
             news={{
               _id: article._id,
               slug: article.slug,
-              image: article.imageUrl || `https://images.unsplash.com/photo-${Math.random() > 0.5 ? '1611273426858-450d8e3c9fce' : '1569163139394-79a1ce873e4e'}?w=800&h=500&fit=crop`,
+              image:
+                article.imageUrl ||
+                `https://images.unsplash.com/photo-${
+                  Math.random() > 0.5
+                    ? "1611273426858-450d8e3c9fce"
+                    : "1569163139394-79a1ce873e4e"
+                }?w=800&h=500&fit=crop`,
               content: article.summary || article.content,
               title: article.title,
               category: article.category || "Sustainability",

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import useAuthStore from "../stores/authStore";
 import LoadingSpinner from "./common/LoadingSpinner";
 
@@ -9,8 +9,9 @@ import whiteLogo from "../assets/logo-white.svg";
 export default function LoginPage() {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const { login, isLoading } = useAuthStore();
+  const { login, isLoading, error } = useAuthStore();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -30,8 +31,11 @@ export default function LoginPage() {
         setIdentifier={setIdentifier}
         password={password}
         setPassword={setPassword}
+        showPassword={showPassword}
+        setShowPassword={setShowPassword}
         onSubmit={handleSubmit}
         isLoading={isLoading}
+        error={error}
       />
       <AppMottoSection>SME Carbon Management Towards Net Zero</AppMottoSection>
     </div>
@@ -44,8 +48,11 @@ export function UserCredentialsSection({
   setIdentifier,
   password,
   setPassword,
+  showPassword,
+  setShowPassword,
   onSubmit,
   isLoading,
+  error,
   className,
 }) {
   return (
@@ -54,32 +61,67 @@ export function UserCredentialsSection({
         <img src={darkLogo} alt="dark-logo" />
       </span>
 
+      <div className="auth-header">
+        <h2>Welcome Back</h2>
+        <p>Sign in to continue to your account</p>
+      </div>
+
       <form className="form-user-credentials" onSubmit={onSubmit}>
-        <span>
+        {error && (
+          <div className="auth-error-message">
+            <span className="material-symbols-outlined">error</span>
+            {error}
+          </div>
+        )}
+
+        <div className="form-field">
           <label>User ID or Email</label>
-          <input
-            type="text"
-            value={identifier}
-            onChange={(e) => setIdentifier(e.target.value)}
-            placeholder="Enter your User ID or Email"
-            required
-            disabled={isLoading}
-          />
-        </span>
+          <div className="input-wrapper">
+            <span className="material-symbols-outlined input-icon">person</span>
+            <input
+              type="text"
+              value={identifier}
+              onChange={(e) => setIdentifier(e.target.value)}
+              placeholder="Enter your User ID or Email"
+              required
+              disabled={isLoading}
+            />
+          </div>
+        </div>
 
-        <span>
+        <div className="form-field">
           <label>Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter your password"
-            required
-            disabled={isLoading}
-          />
-        </span>
+          <div className="input-wrapper">
+            <span className="material-symbols-outlined input-icon">lock</span>
+            <input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              required
+              disabled={isLoading}
+            />
+            <button
+              type="button"
+              className="password-toggle"
+              onClick={() => setShowPassword(!showPassword)}
+              disabled={isLoading}
+              tabIndex="-1"
+            >
+              <span className="material-symbols-outlined">
+                {showPassword ? "visibility_off" : "visibility"}
+              </span>
+            </button>
+          </div>
+        </div>
 
-        <button type="submit" disabled={isLoading}>
+        <div className="form-footer">
+          <Link to="/forgot-password" className="forgot-password-link">
+            Forgot Password?
+          </Link>
+        </div>
+
+        <button type="submit" className="submit-btn" disabled={isLoading}>
           {isLoading ? <LoadingSpinner size="small" /> : "Sign In"}
         </button>
       </form>
