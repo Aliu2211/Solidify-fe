@@ -78,6 +78,58 @@ function StatsGrid() {
     );
   }
 
+  // Calculate monthly average from monthlyTrend data
+  const calculateMonthlyAverage = () => {
+    if (!dashboard?.monthlyTrend || dashboard.monthlyTrend.length === 0) {
+      return 0;
+    }
+    const total = dashboard.monthlyTrend.reduce((sum, month) => sum + (month.emissions || 0), 0);
+    return Math.round(total / dashboard.monthlyTrend.length);
+  };
+
+  // Calculate goal progress from active goals
+  const calculateGoalProgress = () => {
+    if (!dashboard?.activeGoals || dashboard.activeGoals.length === 0) {
+      return { progress: 0, message: "Set a goal" };
+    }
+
+    const goal = dashboard.activeGoals[0];
+    if (goal.progress !== undefined) {
+      return {
+        progress: Math.round(goal.progress),
+        message: goal.status === "completed" ? "Goal achieved!" : `${Math.round(goal.progress)}% complete`
+      };
+    }
+
+    return { progress: 0, message: "In progress" };
+  };
+
+  // Determine emission trend
+  const getEmissionTrend = () => {
+    if (!dashboard?.monthlyTrend || dashboard.monthlyTrend.length < 2) {
+      return { trend: "neutral", change: "No data yet" };
+    }
+
+    const lastMonth = dashboard.monthlyTrend[dashboard.monthlyTrend.length - 1]?.emissions || 0;
+    const previousMonth = dashboard.monthlyTrend[dashboard.monthlyTrend.length - 2]?.emissions || 0;
+
+    if (previousMonth === 0) {
+      return { trend: "neutral", change: "Not enough data" };
+    }
+
+    const changePercent = ((lastMonth - previousMonth) / previousMonth * 100).toFixed(1);
+    const trend = changePercent > 0 ? "up" : changePercent < 0 ? "down" : "neutral";
+
+    return {
+      trend,
+      change: `${Math.abs(changePercent)}% ${trend === "up" ? "increase" : trend === "down" ? "decrease" : ""}`.trim()
+    };
+  };
+
+  const emissionTrend = getEmissionTrend();
+  const monthlyAverage = calculateMonthlyAverage();
+  const goalData = calculateGoalProgress();
+
   const stats = [
     {
       id: 1,
@@ -85,38 +137,40 @@ function StatsGrid() {
       value: dashboard?.totalEmissions?.toLocaleString() || "0",
       unit: "kg CO₂",
       icon: "🌍",
-      trend: dashboard?.trend || "neutral",
-      change: dashboard?.changePercentage || "0",
+      trend: emissionTrend.trend,
+      change: emissionTrend.change,
       color: "#ef4444",
     },
     {
       id: 2,
       title: "Sustainability Level",
-      value: dashboard?.sustainabilityLevel || "1",
+      value: dashboard?.roadmap?.currentLevel || "1",
       unit: "/3",
       icon: "⭐",
       trend: "up",
-      change: "On track",
+      change: dashboard?.roadmap?.currentLevel === 3 ? "Maximum level!" : "Keep improving",
       color: "#10b981",
     },
     {
       id: 3,
       title: "Monthly Average",
-      value: dashboard?.monthlyAverage?.toLocaleString() || "0",
+      value: monthlyAverage.toLocaleString(),
       unit: "kg CO₂",
       icon: "📊",
-      trend: dashboard?.monthlyTrend || "neutral",
-      change: dashboard?.monthlyChange || "0",
+      trend: emissionTrend.trend,
+      change: dashboard?.monthlyTrend?.length > 0
+        ? `${dashboard.monthlyTrend.length} month${dashboard.monthlyTrend.length > 1 ? 's' : ''} tracked`
+        : "Add entries to track",
       color: "#3b82f6",
     },
     {
       id: 4,
       title: "Goal Progress",
-      value: dashboard?.goalProgress || "0",
+      value: goalData.progress,
       unit: "%",
       icon: "🎯",
-      trend: "up",
-      change: dashboard?.daysToGoal ? `${dashboard.daysToGoal} days left` : "Set a goal",
+      trend: goalData.progress > 50 ? "up" : "neutral",
+      change: goalData.message,
       color: "#f59e0b",
     },
   ];
