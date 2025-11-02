@@ -39,6 +39,15 @@ export default function Chat() {
     fetchConversations();
   }, [fetchConversations]);
 
+  // Poll for new conversations and unread counts every 30 seconds
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      fetchConversations();
+    }, 30000); // Refresh every 30 seconds to reduce API calls
+
+    return () => clearInterval(intervalId);
+  }, [fetchConversations]);
+
   // Poll for new messages every 3 seconds
   useEffect(() => {
     if (!currentConversation) return;
