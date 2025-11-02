@@ -70,6 +70,22 @@ export const API_ENDPOINTS = {
   // Organizations
   ORGANIZATIONS: '/organizations',
   ORGANIZATION: (id) => `/organizations/${id}`,
+
+  // Admin - Courses
+  ADMIN_COURSES: '/courses',
+  ADMIN_COURSE: (id) => `/courses/${id}`,
+
+  // Admin - Library Resources
+  ADMIN_LIBRARY_RESOURCES: '/library/resources',
+  ADMIN_LIBRARY_RESOURCE: (id) => `/library/resources/${id}`,
+
+  // Admin - News
+  ADMIN_NEWS: '/news',
+  ADMIN_NEWS_ARTICLE: (id) => `/news/${id}`,
+
+  // Admin - Knowledge Base
+  ADMIN_KNOWLEDGE: '/knowledge/articles',
+  ADMIN_KNOWLEDGE_ARTICLE: (slug) => `/knowledge/articles/${slug}`,
 };
 
 // Sustainability Levels
