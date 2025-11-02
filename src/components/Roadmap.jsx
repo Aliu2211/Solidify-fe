@@ -1,30 +1,56 @@
-// copied from gpt
-// will fix later
 export function Roadmap({
-  count = 6, // number of dots
+  count = 6, // number of milestones
   completed = 0, // index of last completed step (0-based)
-  dot = 28, // dot diameter (px)
-  line = 6, // line thickness (px)
-  dashRatio = 0.75, // 0..1, portion of each gap that is solid
-  lineColor = "#fff",
-  dotColor = "#a29090ff",
 }) {
-  const style = {
-    "--steps": count,
-    "--dot": `${dot}px`,
-    "--line-h": `${line}px`,
-    "--dash-ratio": dashRatio,
-    "--line-color": lineColor,
-    "--dot-color": dotColor,
-  };
+  const milestones = Array.from({ length: count }, (_, i) => ({
+    id: i + 1,
+    isCompleted: i <= completed,
+    isActive: i === completed + 1,
+  }));
 
   return (
-    <div className="rm" style={style}>
-      <ul className="rm-dots">
-        {Array.from({ length: count }).map((_, i) => (
-          <li key={i} className={`rm-dot${i <= completed ? " done" : ""}`} />
+    <div className="roadmap-progress-indicator">
+      <div className="roadmap-line-container">
+        {/* Background line */}
+        <div className="roadmap-line-bg"></div>
+        {/* Progress line */}
+        <div
+          className="roadmap-line-progress"
+          style={{
+            width: `${(completed / (count - 1)) * 100}%`
+          }}
+        ></div>
+      </div>
+
+      {/* Milestone dots */}
+      <div className="roadmap-dots-container">
+        {milestones.map((milestone, index) => (
+          <div
+            key={milestone.id}
+            className={`roadmap-dot-wrapper ${
+              milestone.isCompleted ? 'completed' : ''
+            } ${milestone.isActive ? 'active' : ''}`}
+            style={{
+              left: `${(index / (count - 1)) * 100}%`
+            }}
+          >
+            <div className="roadmap-dot">
+              {milestone.isCompleted && (
+                <svg
+                  className="roadmap-check"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                >
+                  <polyline points="20 6 9 17 4 12"></polyline>
+                </svg>
+              )}
+              {!milestone.isCompleted && <span>{milestone.id}</span>}
+            </div>
+            <div className="roadmap-pulse"></div>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
