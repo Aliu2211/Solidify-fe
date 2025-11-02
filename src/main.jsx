@@ -20,6 +20,8 @@ import "./styles/Contents.css";
 import "./styles/Chat.css";
 import "./styles/FindSME.css";
 import "./styles/Settings.css";
+import "./styles/LibrarySection.css";
+import "./styles/LibraryItem.css";
 import "./styles/Library.css";
 import "./styles/AdminDashboard.css";
 
