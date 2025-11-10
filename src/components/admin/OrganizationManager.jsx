@@ -16,25 +16,17 @@ export default function OrganizationManager() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterIndustry, setFilterIndustry] = useState('all');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
+  const [viewingOrganization, setViewingOrganization] = useState(null);
 
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    industry: 'Technology',
+    industryType: 'Technology',
+    size: 'medium',
+    location: '',
+    registrationNumber: '',
     website: '',
-    contactEmail: '',
-    contactPhone: '',
-    address: {
-      street: '',
-      city: '',
-      state: '',
-      country: '',
-      postalCode: '',
-    },
-    carbonFootprint: {
-      total: 0,
-      unit: 'tCO2e',
-    },
+    logoUrl: '',
   });
 
   useEffect(() => {
@@ -65,21 +57,12 @@ export default function OrganizationManager() {
     setFormData({
       name: '',
       description: '',
-      industry: 'Technology',
+      industryType: 'Technology',
+      size: 'medium',
+      location: '',
+      registrationNumber: '',
       website: '',
-      contactEmail: '',
-      contactPhone: '',
-      address: {
-        street: '',
-        city: '',
-        state: '',
-        country: '',
-        postalCode: '',
-      },
-      carbonFootprint: {
-        total: 0,
-        unit: 'tCO2e',
-      },
+      logoUrl: '',
     });
     setShowModal(true);
   };
@@ -89,21 +72,12 @@ export default function OrganizationManager() {
     setFormData({
       name: org.name || '',
       description: org.description || '',
-      industry: org.industry || 'Technology',
+      industryType: org.industryType || 'Technology',
+      size: org.size || 'medium',
+      location: org.location || '',
+      registrationNumber: org.registrationNumber || '',
       website: org.website || '',
-      contactEmail: org.contactEmail || '',
-      contactPhone: org.contactPhone || '',
-      address: org.address || {
-        street: '',
-        city: '',
-        state: '',
-        country: '',
-        postalCode: '',
-      },
-      carbonFootprint: org.carbonFootprint || {
-        total: 0,
-        unit: 'tCO2e',
-      },
+      logoUrl: org.logoUrl || '',
     });
     setShowModal(true);
   };
@@ -118,26 +92,10 @@ export default function OrganizationManager() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAddressChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      address: { ...prev.address, [name]: value },
-    }));
-  };
-
-  const handleCarbonFootprintChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      carbonFootprint: { ...prev.carbonFootprint, [name]: name === 'total' ? parseFloat(value) || 0 : value },
-    }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.contactEmail) {
+    if (!formData.name || !formData.industryType || !formData.size || !formData.location || !formData.registrationNumber) {
       toast.error('Please fill in all required fields');
       return;
     }
@@ -164,7 +122,7 @@ export default function OrganizationManager() {
     const matchesSearch =
       org.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       org.description?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesIndustry = filterIndustry === 'all' || org.industry === filterIndustry;
+    const matchesIndustry = filterIndustry === 'all' || org.industryType === filterIndustry;
     return matchesSearch && matchesIndustry;
   });
 
@@ -201,23 +159,15 @@ export default function OrganizationManager() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <div className="filter-buttons">
-          <button
-            className={filterIndustry === 'all' ? 'active' : ''}
-            onClick={() => setFilterIndustry('all')}
-          >
-            All
-          </button>
-          {industries.slice(0, 5).map((industry) => (
-            <button
-              key={industry}
-              className={filterIndustry === industry ? 'active' : ''}
-              onClick={() => setFilterIndustry(industry)}
-            >
+
+        <select value={filterIndustry} onChange={(e) => setFilterIndustry(e.target.value)}>
+          <option value="all">All Industries</option>
+          {industries.map((industry) => (
+            <option key={industry} value={industry}>
               {industry}
-            </button>
+            </option>
           ))}
-        </div>
+        </select>
       </div>
 
       {/* Organizations Grid */}
@@ -234,6 +184,9 @@ export default function OrganizationManager() {
               <div className="card-header">
                 <div className="card-category">{org.industry}</div>
                 <div className="card-actions">
+                  <button onClick={() => setViewingOrganization(org)} title="View Details">
+                    <span className="material-symbols-outlined">visibility</span>
+                  </button>
                   <button onClick={() => openEditModal(org)} title="Edit">
                     <span className="material-symbols-outlined">edit</span>
                   </button>
@@ -243,17 +196,15 @@ export default function OrganizationManager() {
                 </div>
               </div>
               <h3>{org.name}</h3>
-              <p>{org.description?.substring(0, 100)}...</p>
+              <p>{org.description?.substring(0, 100) || 'No description'}...</p>
               <div className="card-meta">
                 <span className="status-badge status-published">
-                  Active
+                  {org.size === 'small' ? 'Small' : 'Medium'}
                 </span>
-                {org.carbonFootprint && (
-                  <span className="author-badge">
-                    <span className="material-symbols-outlined">eco</span>
-                    {org.carbonFootprint.total} {org.carbonFootprint.unit}
-                  </span>
-                )}
+                <span className="author-badge">
+                  <span className="material-symbols-outlined">location_on</span>
+                  {org.location}
+                </span>
               </div>
               {org.website && (
                 <div className="card-tags">
@@ -273,15 +224,23 @@ export default function OrganizationManager() {
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content modal-large" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>{editingOrganization ? 'Edit Organization' : 'Register New Organization'}</h3>
-              <button onClick={closeModal}>
+              <h3>
+                <span className="material-symbols-outlined">
+                  {editingOrganization ? 'edit' : 'business'}
+                </span>
+                {editingOrganization ? 'Edit Organization' : 'Register New Organization'}
+              </h3>
+              <button type="button" onClick={closeModal}>
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="modal-form">
               {/* Basic Information */}
-              <div className="form-section-title">Basic Information</div>
+              <div className="form-section-title">
+                <span className="material-symbols-outlined">info</span>
+                Basic Information
+              </div>
 
               <div className="form-row">
                 <div className="form-group">
@@ -295,6 +254,63 @@ export default function OrganizationManager() {
                     onChange={handleInputChange}
                     required
                     placeholder="Enter organization name"
+                  />
+                </div>
+              </div>
+
+              <div className="form-row-2">
+                <div className="form-group">
+                  <label>
+                    Industry Type <span className="required">*</span>
+                  </label>
+                  <select name="industryType" value={formData.industryType} onChange={handleInputChange} required>
+                    {industries.map((ind) => (
+                      <option key={ind} value={ind}>
+                        {ind}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>
+                    Organization Size <span className="required">*</span>
+                  </label>
+                  <select name="size" value={formData.size} onChange={handleInputChange} required>
+                    <option value="small">Small</option>
+                    <option value="medium">Medium</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>
+                    Location <span className="required">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleInputChange}
+                    required
+                    placeholder="Accra, Greater Accra, Ghana"
+                  />
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>
+                    Registration Number <span className="required">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="registrationNumber"
+                    value={formData.registrationNumber}
+                    onChange={handleInputChange}
+                    required
+                    placeholder="GH-123456789"
                   />
                 </div>
               </div>
@@ -314,17 +330,6 @@ export default function OrganizationManager() {
 
               <div className="form-row-2">
                 <div className="form-group">
-                  <label>Industry</label>
-                  <select name="industry" value={formData.industry} onChange={handleInputChange}>
-                    {industries.map((ind) => (
-                      <option key={ind} value={ind}>
-                        {ind}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className="form-group">
                   <label>Website</label>
                   <input
                     type="url"
@@ -334,160 +339,172 @@ export default function OrganizationManager() {
                     placeholder="https://..."
                   />
                 </div>
-              </div>
 
-              {/* Contact Information */}
-              <div className="form-section-title">Contact Information</div>
-
-              <div className="form-row-2">
                 <div className="form-group">
-                  <label>
-                    Contact Email <span className="required">*</span>
-                  </label>
+                  <label>Logo URL</label>
                   <input
-                    type="email"
-                    name="contactEmail"
-                    value={formData.contactEmail}
+                    type="url"
+                    name="logoUrl"
+                    value={formData.logoUrl}
                     onChange={handleInputChange}
-                    required
-                    placeholder="contact@organization.com"
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Contact Phone</label>
-                  <input
-                    type="tel"
-                    name="contactPhone"
-                    value={formData.contactPhone}
-                    onChange={handleInputChange}
-                    placeholder="+1 (555) 123-4567"
+                    placeholder="https://..."
                   />
                 </div>
               </div>
 
-              {/* Address */}
-              <div className="form-section-title">Address</div>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Street Address</label>
-                  <input
-                    type="text"
-                    name="street"
-                    value={formData.address.street}
-                    onChange={handleAddressChange}
-                    placeholder="123 Main Street"
-                  />
-                </div>
-              </div>
-
-              <div className="form-row-2">
-                <div className="form-group">
-                  <label>City</label>
-                  <input
-                    type="text"
-                    name="city"
-                    value={formData.address.city}
-                    onChange={handleAddressChange}
-                    placeholder="City"
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>State/Province</label>
-                  <input
-                    type="text"
-                    name="state"
-                    value={formData.address.state}
-                    onChange={handleAddressChange}
-                    placeholder="State"
-                  />
-                </div>
-              </div>
-
-              <div className="form-row-2">
-                <div className="form-group">
-                  <label>Country</label>
-                  <input
-                    type="text"
-                    name="country"
-                    value={formData.address.country}
-                    onChange={handleAddressChange}
-                    placeholder="Country"
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Postal Code</label>
-                  <input
-                    type="text"
-                    name="postalCode"
-                    value={formData.address.postalCode}
-                    onChange={handleAddressChange}
-                    placeholder="12345"
-                  />
-                </div>
-              </div>
-
-              {/* Carbon Footprint */}
-              <div className="form-section-title">Carbon Footprint</div>
-
-              <div className="form-row-2">
-                <div className="form-group">
-                  <label>Total Carbon Emissions</label>
-                  <input
-                    type="number"
-                    name="total"
-                    value={formData.carbonFootprint.total}
-                    onChange={handleCarbonFootprintChange}
-                    step="0.01"
-                    min="0"
-                    placeholder="0.00"
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Unit</label>
-                  <select
-                    name="unit"
-                    value={formData.carbonFootprint.unit}
-                    onChange={handleCarbonFootprintChange}
-                  >
-                    <option value="tCO2e">tCO2e</option>
-                    <option value="kgCO2e">kgCO2e</option>
-                    <option value="lbs">lbs</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="modal-actions">
-                <button type="button" onClick={closeModal} className="btn-secondary">
-                  Cancel
-                </button>
-                <button type="submit" className="btn-primary">
-                  {editingOrganization ? 'Update Organization' : 'Register Organization'}
-                </button>
-              </div>
             </form>
+
+            <div className="modal-actions">
+              <button type="button" onClick={closeModal}>
+                <span className="material-symbols-outlined">close</span>
+                Cancel
+              </button>
+              <button type="submit" onClick={handleSubmit}>
+                <span className="material-symbols-outlined">
+                  {editingOrganization ? 'check_circle' : 'add_business'}
+                </span>
+                {editingOrganization ? 'Update Organization' : 'Register Organization'}
+              </button>
+            </div>
           </div>
         </div>
       )}
 
       {/* Delete Confirmation */}
       {showDeleteConfirm && (
-        <div className="modal-overlay" onClick={() => setShowDeleteConfirm(null)}>
-          <div className="modal-content modal-small" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-overlay delete-modal" onClick={() => setShowDeleteConfirm(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>Confirm Delete</h3>
+              <h3>
+                <span className="material-symbols-outlined">warning</span>
+                Confirm Delete
+              </h3>
+              <button type="button" onClick={() => setShowDeleteConfirm(null)}>
+                <span className="material-symbols-outlined">close</span>
+              </button>
             </div>
-            <p>Are you sure you want to delete this organization? This action cannot be undone.</p>
+            <div className="modal-form">
+              <p style={{ margin: 0, fontSize: '15px', color: '#6b7280', lineHeight: '1.6' }}>
+                Are you sure you want to delete this organization? This action cannot be undone and will permanently remove all associated data.
+              </p>
+            </div>
             <div className="modal-actions">
-              <button onClick={() => setShowDeleteConfirm(null)} className="btn-secondary">
+              <button type="button" onClick={() => setShowDeleteConfirm(null)}>
+                <span className="material-symbols-outlined">close</span>
                 Cancel
               </button>
-              <button onClick={() => handleDelete(showDeleteConfirm)} className="btn-delete">
-                Delete
+              <button type="submit" onClick={() => handleDelete(showDeleteConfirm)}>
+                <span className="material-symbols-outlined">delete</span>
+                Delete Organization
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* View Details Modal */}
+      {viewingOrganization && (
+        <div className="modal-overlay" onClick={() => setViewingOrganization(null)}>
+          <div className="modal-content modal-large" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>
+                <span className="material-symbols-outlined">info</span>
+                Organization Details
+              </h3>
+              <button type="button" onClick={() => setViewingOrganization(null)}>
+                <span className="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            <div className="modal-form">
+              {/* Organization ID Section */}
+              <div className="form-section-title">
+                <span className="material-symbols-outlined">badge</span>
+                Organization ID
+              </div>
+              <div className="detail-group">
+                <div className="detail-label">ID (Use this for user registration)</div>
+                <div className="detail-value-highlight">
+                  <code>{viewingOrganization._id}</code>
+                  <button
+                    className="btn-copy"
+                    onClick={() => {
+                      navigator.clipboard.writeText(viewingOrganization._id);
+                      toast.success('Organization ID copied to clipboard!');
+                    }}
+                    title="Copy to clipboard"
+                  >
+                    <span className="material-symbols-outlined">content_copy</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Basic Information */}
+              <div className="form-section-title">
+                <span className="material-symbols-outlined">info</span>
+                Basic Information
+              </div>
+              <div className="detail-grid">
+                <div className="detail-group full-width">
+                  <div className="detail-label">Name</div>
+                  <div className="detail-value">{viewingOrganization.name}</div>
+                </div>
+                <div className="detail-group">
+                  <div className="detail-label">Industry Type</div>
+                  <div className="detail-value">{viewingOrganization.industryType}</div>
+                </div>
+                <div className="detail-group">
+                  <div className="detail-label">Size</div>
+                  <div className="detail-value">{viewingOrganization.size === 'small' ? 'Small' : 'Medium'}</div>
+                </div>
+                <div className="detail-group full-width">
+                  <div className="detail-label">Location</div>
+                  <div className="detail-value">{viewingOrganization.location}</div>
+                </div>
+                <div className="detail-group full-width">
+                  <div className="detail-label">Registration Number</div>
+                  <div className="detail-value">{viewingOrganization.registrationNumber}</div>
+                </div>
+                <div className="detail-group full-width">
+                  <div className="detail-label">Description</div>
+                  <div className="detail-value">{viewingOrganization.description || 'N/A'}</div>
+                </div>
+                {viewingOrganization.website && (
+                  <div className="detail-group full-width">
+                    <div className="detail-label">Website</div>
+                    <div className="detail-value">
+                      <a href={viewingOrganization.website} target="_blank" rel="noopener noreferrer">
+                        {viewingOrganization.website}
+                      </a>
+                    </div>
+                  </div>
+                )}
+                {viewingOrganization.logoUrl && (
+                  <div className="detail-group full-width">
+                    <div className="detail-label">Logo</div>
+                    <div className="detail-value">
+                      <img src={viewingOrganization.logoUrl} alt={viewingOrganization.name} style={{ maxWidth: '200px', borderRadius: '8px', marginTop: '8px' }} />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="modal-actions">
+              <button type="button" onClick={() => setViewingOrganization(null)}>
+                <span className="material-symbols-outlined">close</span>
+                Close
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setViewingOrganization(null);
+                  openEditModal(viewingOrganization);
+                }}
+              >
+                <span className="material-symbols-outlined">edit</span>
+                Edit Organization
               </button>
             </div>
           </div>
