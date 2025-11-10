@@ -44,24 +44,30 @@ const useAuthStore = create(
         }
       },
 
-      register: async (userData) => {
+      register: async (userData, skipLogin = false) => {
         set({ isLoading: true, error: null });
         try {
           const response = await authService.register(userData);
           const { user, accessToken, refreshToken } = response.data;
 
-          // Store tokens
-          storage.setTokens(accessToken, refreshToken);
-          storage.setUser(user);
+          // Only store tokens and login if not skipped (for admin user creation)
+          if (!skipLogin) {
+            storage.setTokens(accessToken, refreshToken);
+            storage.setUser(user);
 
-          set({
-            user,
-            isAuthenticated: true,
-            isLoading: false,
-            error: null,
-          });
+            set({
+              user,
+              isAuthenticated: true,
+              isLoading: false,
+              error: null,
+            });
 
-          handleApiSuccess('Registration successful!');
+            handleApiSuccess('Registration successful!');
+          } else {
+            set({ isLoading: false, error: null });
+            handleApiSuccess('User created successfully!');
+          }
+
           return { success: true, user };
         } catch (error) {
           const errorMessage = handleApiError(error);
