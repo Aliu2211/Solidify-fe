@@ -332,7 +332,7 @@ const useAdminStore = create((set, get) => ({
       if (response.success) {
         set({ newsLoading: false });
         handleApiSuccess('News article created successfully!');
-        await get().fetchNews();
+        await get().fetchNews({}, true); // Force refresh
         return { success: true, data: response.data };
       } else {
         set({ error: response.message, newsLoading: false });
@@ -352,7 +352,7 @@ const useAdminStore = create((set, get) => ({
       if (response.success) {
         set({ newsLoading: false });
         handleApiSuccess('News article updated successfully!');
-        await get().fetchNews();
+        await get().fetchNews({}, true); // Force refresh
         return { success: true, data: response.data };
       } else {
         set({ error: response.message, newsLoading: false });
@@ -372,7 +372,7 @@ const useAdminStore = create((set, get) => ({
       if (response.success) {
         set({ newsLoading: false });
         handleApiSuccess('News article deleted successfully!');
-        await get().fetchNews();
+        await get().fetchNews({}, true); // Force refresh
         return { success: true };
       } else {
         set({ error: response.message, newsLoading: false });
@@ -498,7 +498,7 @@ const useAdminStore = create((set, get) => ({
       if (response.success) {
         set({ organizationsLoading: false });
         handleApiSuccess('Organization created successfully!');
-        await get().fetchOrganizations();
+        await get().fetchOrganizations({}, true); // Force refresh
         return { success: true, data: response.data };
       } else {
         set({ error: response.message, organizationsLoading: false });
@@ -518,7 +518,7 @@ const useAdminStore = create((set, get) => ({
       if (response.success) {
         set({ organizationsLoading: false });
         handleApiSuccess('Organization updated successfully!');
-        await get().fetchOrganizations();
+        await get().fetchOrganizations({}, true); // Force refresh
         return { success: true, data: response.data };
       } else {
         set({ error: response.message, organizationsLoading: false });
@@ -538,7 +538,7 @@ const useAdminStore = create((set, get) => ({
       if (response.success) {
         set({ organizationsLoading: false });
         handleApiSuccess('Organization deleted successfully!');
-        await get().fetchOrganizations();
+        await get().fetchOrganizations({}, true); // Force refresh
         return { success: true };
       } else {
         set({ error: response.message, organizationsLoading: false });

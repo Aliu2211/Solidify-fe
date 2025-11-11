@@ -23,6 +23,7 @@ export default function CourseManager() {
     orderInLevel: 1,
     duration: 60,
     thumbnail: '',
+    slug: '', // Added slug field
     completionCriteria: {
       type: 'read',
       passingScore: 0,
@@ -54,6 +55,7 @@ export default function CourseManager() {
         orderInLevel: 1,
         duration: 60,
         thumbnail: '',
+        slug: '', // Added slug field
         completionCriteria: {
           type: 'read',
           passingScore: 0,
@@ -76,9 +78,34 @@ export default function CourseManager() {
     // Show user-friendly message about rate limiting
     toast.loading('Request queued to prevent rate limiting. Please wait...', { id: 'course-request' });
 
+    // Generate slug (backend requires it despite API docs saying it should be auto-generated)
+    let slug = formData.slug;
+
+    if (!editingCourse || !slug) {
+      // Create URL-friendly slug from title
+      slug = formData.title
+        .toLowerCase()
+        .trim()
+        .replace(/[^\w\s-]/g, '') // Remove special characters
+        .replace(/\s+/g, '-')      // Replace spaces with hyphens
+        .replace(/-+/g, '-')       // Replace multiple hyphens with single hyphen
+        .replace(/^-+|-+$/g, '');  // Remove leading/trailing hyphens
+
+      // Fallback if slug is empty after sanitization
+      if (!slug) {
+        slug = 'course-' + Date.now();
+      }
+    }
+
+    // Construct courseData with slug at the beginning to ensure it's processed first
+    const courseData = {
+      slug,
+      ...formData,
+    };
+
     const result = editingCourse
-      ? await updateCourse(editingCourse._id, formData)
-      : await createCourse(formData);
+      ? await updateCourse(editingCourse._id, courseData)
+      : await createCourse(courseData);
 
     toast.dismiss('course-request');
 
@@ -198,15 +225,25 @@ export default function CourseManager() {
       {/* Modal */}
       {showModal && (
         <div className="modal-overlay" onClick={handleCloseModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+          <div className="modal-content modal-large" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>{editingCourse ? 'Edit Course' : 'Create Course'}</h3>
-              <button className="modal-close" onClick={handleCloseModal}>
+              <h3>
+                <span className="material-symbols-outlined">
+                  {editingCourse ? 'edit_note' : 'school'}
+                </span>
+                {editingCourse ? 'Edit Course' : 'Create Course'}
+              </h3>
+              <button type="button" onClick={handleCloseModal}>
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
 
             <form onSubmit={handleSubmit} className="modal-form">
+              <div className="form-section-title">
+                <span className="material-symbols-outlined">info</span>
+                Course Information
+              </div>
+
               <div className="form-grid">
                 <div className="form-group">
                   <label>Title *</label>
@@ -284,16 +321,29 @@ export default function CourseManager() {
                   />
                 </div>
               </div>
-
-              <div className="modal-actions">
-                <button type="button" className="btn-secondary" onClick={handleCloseModal}>
-                  Cancel
-                </button>
-                <button type="submit" className="btn-primary" disabled={coursesLoading}>
-                  {coursesLoading ? <LoadingSpinner size="small" /> : editingCourse ? 'Update' : 'Create'}
-                </button>
-              </div>
             </form>
+
+            <div className="modal-actions">
+              <button type="button" onClick={handleCloseModal}>
+                <span className="material-symbols-outlined">close</span>
+                Cancel
+              </button>
+              <button type="submit" onClick={handleSubmit} disabled={coursesLoading}>
+                {coursesLoading ? (
+                  <>
+                    <span className="spinner"></span>
+                    {editingCourse ? 'Updating...' : 'Creating...'}
+                  </>
+                ) : (
+                  <>
+                    <span className="material-symbols-outlined">
+                      {editingCourse ? 'check_circle' : 'add_circle'}
+                    </span>
+                    {editingCourse ? 'Update Course' : 'Create Course'}
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       )}

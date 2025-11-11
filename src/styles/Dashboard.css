@@ -301,86 +301,176 @@
 
 /* ===== ROADMAP SECTION ===== */
 .roadmap-section {
-  background: var(--color-primary) !important;
+  background: white !important;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
 }
 
-.roadmap-section .section-header h2,
+.roadmap-section::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.05) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.roadmap-section::after {
+  content: '';
+  position: absolute;
+  bottom: -30%;
+  left: -5%;
+  width: 250px;
+  height: 250px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.03) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.roadmap-section .section-header h2 {
+  color: #1e293b;
+}
+
 .roadmap-section .section-subtitle {
-  color: white;
+  color: #64748b;
 }
 
 .roadmap-section .section-header {
-  border-bottom-color: rgba(255, 255, 255, 0.2);
+  border-bottom-color: #f1f5f9;
+  position: relative;
+  z-index: 1;
+}
+
+.roadmap-section .toggle-btn {
+  background: #f8fafc;
+  color: var(--color-primary);
+  border: 1px solid #e2e8f0;
+}
+
+.roadmap-section .toggle-btn:hover {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
 }
 
 .roadmap-visual {
   margin: 20px 0;
-  padding: 30px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  padding: 35px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  border-radius: 16px;
+  border: 1px solid #d1fae5;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.08);
+  position: relative;
+  z-index: 1;
 }
 
 .progress-bar {
   width: 100%;
-  height: 8px;
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
+  height: 10px;
+  background: rgba(16, 185, 129, 0.1);
+  border-radius: 12px;
   overflow: hidden;
-  margin-top: 20px;
+  margin-top: 24px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(16, 185, 129, 0.15);
 }
 
 .progress-fill {
   height: 100%;
-  background: white;
-  border-radius: 10px;
-  transition: width 0.6s ease;
+  background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+  border-radius: 12px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+  position: relative;
+}
+
+.progress-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .milestone-list {
   margin-top: 20px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
+  position: relative;
+  z-index: 1;
 }
 
 .milestone-item {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.9);
-  border-radius: 12px;
-  border-left: 4px solid rgba(255, 255, 255, 0.5);
-  transition: all 0.3s ease;
+  gap: 14px;
+  padding: 18px;
+  background: #f8fafc;
+  border-radius: 14px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #cbd5e1;
 }
 
 .milestone-item.completed {
-  background: white;
-  border-left-color: var(--color-secondary);
+  background: #f0fdf4;
+  border-left-color: #059669;
+  border-color: #d1fae5;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.1);
 }
 
 .milestone-item:hover {
   background: white;
-  transform: translateX(4px);
+  transform: translateX(6px) translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  border-color: var(--color-primary);
 }
 
 .milestone-check {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.3);
+  background: #e2e8f0;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 700;
   font-size: 14px;
-  color: white;
+  color: #64748b;
   flex-shrink: 0;
+  border: 2px solid #cbd5e1;
+  transition: all 0.3s ease;
 }
 
 .milestone-item.completed .milestone-check {
-  background: var(--color-secondary);
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
   color: white;
+  border-color: #059669;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+}
+
+.milestone-item:hover .milestone-check {
+  transform: scale(1.1) rotate(5deg);
 }
 
 .milestone-info {
@@ -389,30 +479,62 @@
 
 .milestone-title {
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   color: #1e293b;
-  margin: 0 0 4px 0;
+  margin: 0 0 6px 0;
+  letter-spacing: 0.2px;
 }
 
 .milestone-desc {
   font-size: 13px;
   color: #64748b;
   margin: 0;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 /* ===== NEWS SECTION ===== */
 .news-section-dashboard {
-  background: var(--color-primary) !important;
+  background: white !important;
+  border: 1px solid #e2e8f0;
+  position: relative;
+  overflow: hidden;
 }
 
-.news-section-dashboard .section-header h2,
+.news-section-dashboard::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  left: -10%;
+  width: 280px;
+  height: 280px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.04) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.news-section-dashboard .section-header h2 {
+  color: #1e293b;
+}
+
 .news-section-dashboard .section-subtitle {
-  color: white;
+  color: #64748b;
 }
 
 .news-section-dashboard .section-header {
-  border-bottom-color: rgba(255, 255, 255, 0.2);
+  border-bottom-color: #f1f5f9;
+}
+
+.news-section-dashboard .view-all-btn {
+  background: #f8fafc;
+  color: var(--color-primary);
+  border: 1px solid #e2e8f0;
+}
+
+.news-section-dashboard .view-all-btn:hover {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
 }
 
 .news-grid-dashboard {
@@ -421,26 +543,31 @@
   gap: 20px;
   padding: 0;
   margin-top: 10px;
+  position: relative;
+  z-index: 1;
 }
 
 /* Override news card colors for dashboard */
 .news-section-dashboard .news-card {
   background: white;
-  border: none;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
 }
 
 .news-section-dashboard .news-card:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  border-color: var(--color-primary);
 }
 
 .empty-state {
   text-align: center;
   padding: 60px 40px;
-  color: rgba(255, 255, 255, 0.8);
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
-  border: 2px dashed rgba(255, 255, 255, 0.2);
+  color: #64748b;
+  background: #f8fafc;
+  border-radius: 16px;
+  border: 2px dashed #cbd5e1;
 }
 
 .empty-state p {
@@ -453,7 +580,7 @@
   font-size: 56px;
   display: block;
   margin-bottom: 16px;
-  opacity: 0.6;
+  opacity: 0.5;
   animation: float 3s ease-in-out infinite;
 }
 
