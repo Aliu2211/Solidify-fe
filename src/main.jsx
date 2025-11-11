@@ -47,10 +47,10 @@ import NotFound from "./components/NotFound.jsx";
 // Admin Components
 import AdminDashboard from "./components/admin/AdminDashboard.jsx";
 import DashboardOverview from "./components/admin/DashboardOverview.jsx";
+import UserManager from "./components/admin/UserManager.jsx";
 import CourseManager from "./components/admin/CourseManager.jsx";
 import LibraryManager from "./components/admin/LibraryManager.jsx";
 import NewsManager from "./components/admin/NewsManager.jsx";
-import KnowledgeManager from "./components/admin/KnowledgeManager.jsx";
 import OrganizationManager from "./components/admin/OrganizationManager.jsx";
 
 createRoot(document.getElementById("root")).render(
@@ -173,10 +173,10 @@ createRoot(document.getElementById("root")).render(
         }
       >
         <Route index element={<DashboardOverview />} />
+        <Route path="users" element={<UserManager />} />
         <Route path="courses" element={<CourseManager />} />
         <Route path="library" element={<LibraryManager />} />
         <Route path="news" element={<NewsManager />} />
-        <Route path="knowledge" element={<KnowledgeManager />} />
         <Route path="organizations" element={<OrganizationManager />} />
       </Route>
 
