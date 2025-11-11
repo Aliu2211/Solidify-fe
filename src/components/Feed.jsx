@@ -57,7 +57,7 @@ export function News({ news, className, onClick }) {
             collapseButtonText="Read Less -"
             collapsedNumWords={15}
           >
-            {feedItem.title}
+            {news.content}
           </TextExpander>
         </div>
 
