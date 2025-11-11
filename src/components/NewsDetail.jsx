@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Header } from "./Header";
 import { Body } from "./Dashboard";
-import { News } from "./News";
+import { News } from "./Feed";
 import useNewsStore from "../stores/newsStore";
 import { NewsDetailSkeleton } from "./common/Skeleton";
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Body } from "./Dashboard";
 import { Header } from "./Header";
-import { News } from "./News";
+import { News } from "./Feed";
 import useNewsStore from "../stores/newsStore";
 import { NewsGridSkeleton } from "./common/Skeleton";
 import { NEWS_CATEGORIES } from "../utils/constants";

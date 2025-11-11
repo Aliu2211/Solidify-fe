@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "./Header";
-import { Feed } from "./Feed";
+import { News } from "./Feed";
 import { Profile } from "./Profile";
 import { Roadmap } from "./Roadmap";
 import useCarbonStore from "../stores/carbonStore";
