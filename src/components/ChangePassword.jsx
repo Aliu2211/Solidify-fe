@@ -219,18 +219,6 @@ export default function ChangePasssword() {
           </div>
         </div>
       </div>
-    <div className="new-password-page">
-      <AppMottoSection className="no-bg">
-        A solution to help Tech based SME’s reach Net Zero Carbon Emission
-      </AppMottoSection>
-
-      <UserCredentialsSection
-        firstLabel="New Password"
-        firstInputType="password"
-        secondLabel="Confirm Password"
-        buttonLabel="Proceed"
-        nextPage="/dashboard"
-      />
     </div>
   );
 }
