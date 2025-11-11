@@ -155,32 +155,6 @@ export default function NewsDetail() {
               ))}
             </div>
           )}
-
-          {/* Share Section */}
-          <div className="article-share">
-            <p className="share-label">Share this article:</p>
-            <div className="share-buttons">
-              <button className="share-btn twitter" aria-label="Share on Twitter">
-                🐦 Twitter
-              </button>
-              <button className="share-btn linkedin" aria-label="Share on LinkedIn">
-                💼 LinkedIn
-              </button>
-              <button className="share-btn facebook" aria-label="Share on Facebook">
-                📘 Facebook
-              </button>
-              <button
-                className="share-btn copy"
-                onClick={() => {
-                  navigator.clipboard.writeText(window.location.href);
-                  alert("Link copied to clipboard!");
-                }}
-                aria-label="Copy link"
-              >
-                🔗 Copy Link
-              </button>
-            </div>
-          </div>
         </article>
 
         {/* Related Articles */}
