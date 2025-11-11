@@ -1,5 +1,5 @@
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 
 import "./index.css";
@@ -86,6 +86,12 @@ createRoot(document.getElementById("root")).render(
       <Route path="/forgot-password" element={<ForgotPassword />} />
       <Route path="/reset-password" element={<ResetPassword />} />
       <Route path="/change-password" element={<ChangePasssword />} />
+
+      {/* Redirect /dashboard paths to correct routes */}
+      <Route path="/dashboard" element={<Navigate to="/home" replace />} />
+      <Route path="/dashboard/news" element={<Navigate to="/news" replace />} />
+      <Route path="/dashboard/news/:slug" element={<Navigate to="/news/:slug" replace />} />
+      <Route path="/dashboard/*" element={<Navigate to="/home" replace />} />
 
       {/* Protected Routes */}
       <Route

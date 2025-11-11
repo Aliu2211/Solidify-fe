@@ -5,38 +5,38 @@ import useChatStore from "../stores/chatStore";
 const tabs = [
   {
     icon: "home",
-    page: "/dashboard",
+    page: "/home",
     tooltip: "Dashboard",
   },
   {
     icon: "newsstand",
-    page: "/dashboard/news",
+    page: "/news",
     tooltip: "News Section",
   },
   {
     icon: "relax",
-    page: "/dashboard/sustainability-choices",
+    page: "/sustainability-choices",
     tooltip: "Sustainability",
   },
   {
     icon: "menu_book",
-    page: "/dashboard/library",
+    page: "/library",
     tooltip: "Library",
   },
   {
     icon: "chat",
-    page: "/dashboard/chat",
+    page: "/chat",
     tooltip: "Chat",
     showBadge: true,
   },
   {
     icon: "crowdsource",
-    page: "/dashboard/find-SME",
+    page: "/find-SME",
     tooltip: "Find SME",
   },
   {
     icon: "settings",
-    page: "/dashboard/settings",
+    page: "/settings",
     tooltip: "Settings",
   },
 ];
