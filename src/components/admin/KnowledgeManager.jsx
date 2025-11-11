@@ -142,23 +142,15 @@ export default function KnowledgeManager() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-        <div className="filter-buttons">
-          <button
-            className={filterCategory === 'all' ? 'active' : ''}
-            onClick={() => setFilterCategory('all')}
-          >
-            All
-          </button>
+
+        <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}>
+          <option value="all">All Categories</option>
           {categories.map((category) => (
-            <button
-              key={category}
-              className={filterCategory === category ? 'active' : ''}
-              onClick={() => setFilterCategory(category)}
-            >
+            <option key={category} value={category}>
               {category}
-            </button>
+            </option>
           ))}
-        </div>
+        </select>
       </div>
 
       {/* Knowledge Grid */}
@@ -215,13 +207,23 @@ export default function KnowledgeManager() {
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content modal-large" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>{editingKnowledge ? 'Edit Knowledge Article' : 'Create New Article'}</h3>
-              <button onClick={closeModal}>
+              <h3>
+                <span className="material-symbols-outlined">
+                  {editingKnowledge ? 'edit_note' : 'lightbulb'}
+                </span>
+                {editingKnowledge ? 'Edit Knowledge Article' : 'Create New Article'}
+              </h3>
+              <button type="button" onClick={closeModal}>
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className="modal-form">
+              <div className="form-section-title">
+                <span className="material-symbols-outlined">article</span>
+                Article Content
+              </div>
+
               <div className="form-row">
                 <div className="form-group">
                   <label>
@@ -254,6 +256,11 @@ export default function KnowledgeManager() {
                 </div>
               </div>
 
+              <div className="form-section-title">
+                <span className="material-symbols-outlined">label</span>
+                Classification
+              </div>
+
               <div className="form-row">
                 <div className="form-group">
                   <label>Category</label>
@@ -278,34 +285,50 @@ export default function KnowledgeManager() {
                   />
                 </div>
               </div>
-
-              <div className="modal-actions">
-                <button type="button" onClick={closeModal} className="btn-secondary">
-                  Cancel
-                </button>
-                <button type="submit" className="btn-primary">
-                  {editingKnowledge ? 'Update Article' : 'Create Article'}
-                </button>
-              </div>
             </form>
+
+            <div className="modal-actions">
+              <button type="button" onClick={closeModal}>
+                <span className="material-symbols-outlined">close</span>
+                Cancel
+              </button>
+              <button type="submit" onClick={handleSubmit}>
+                <span className="material-symbols-outlined">
+                  {editingKnowledge ? 'check_circle' : 'add_circle'}
+                </span>
+                {editingKnowledge ? 'Update Article' : 'Create Article'}
+              </button>
+            </div>
           </div>
         </div>
       )}
 
       {/* Delete Confirmation */}
       {showDeleteConfirm && (
-        <div className="modal-overlay" onClick={() => setShowDeleteConfirm(null)}>
-          <div className="modal-content modal-small" onClick={(e) => e.stopPropagation()}>
+        <div className="modal-overlay delete-modal" onClick={() => setShowDeleteConfirm(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>Confirm Delete</h3>
+              <h3>
+                <span className="material-symbols-outlined">warning</span>
+                Confirm Delete
+              </h3>
+              <button type="button" onClick={() => setShowDeleteConfirm(null)}>
+                <span className="material-symbols-outlined">close</span>
+              </button>
             </div>
-            <p>Are you sure you want to delete this knowledge article? This action cannot be undone.</p>
+            <div className="modal-form">
+              <p style={{ margin: 0, fontSize: '15px', color: '#6b7280', lineHeight: '1.6' }}>
+                Are you sure you want to delete this knowledge article? This action cannot be undone and will permanently remove the article from your knowledge base.
+              </p>
+            </div>
             <div className="modal-actions">
-              <button onClick={() => setShowDeleteConfirm(null)} className="btn-secondary">
+              <button type="button" onClick={() => setShowDeleteConfirm(null)}>
+                <span className="material-symbols-outlined">close</span>
                 Cancel
               </button>
-              <button onClick={() => handleDelete(showDeleteConfirm)} className="btn-delete">
-                Delete
+              <button type="submit" onClick={() => handleDelete(showDeleteConfirm)}>
+                <span className="material-symbols-outlined">delete</span>
+                Delete Article
               </button>
             </div>
           </div>
