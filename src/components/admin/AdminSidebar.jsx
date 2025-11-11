@@ -14,6 +14,11 @@ export default function AdminSidebar({ collapsed, onToggle }) {
       end: true,
     },
     {
+      path: '/admin/users',
+      label: 'Users',
+      icon: 'people',
+    },
+    {
       path: '/admin/courses',
       label: 'Courses',
       icon: 'school',
@@ -27,11 +32,6 @@ export default function AdminSidebar({ collapsed, onToggle }) {
       path: '/admin/news',
       label: 'News',
       icon: 'newspaper',
-    },
-    {
-      path: '/admin/knowledge',
-      label: 'Knowledge',
-      icon: 'lightbulb',
     },
     {
       path: '/admin/organizations',
