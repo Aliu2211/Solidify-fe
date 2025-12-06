@@ -110,15 +110,23 @@ function StatsGrid() {
 
   // Determine emission trend
   const getEmissionTrend = () => {
-    if (!dashboard?.monthlyTrend || dashboard.monthlyTrend.length < 2) {
-      return { trend: "neutral", change: "No data yet" };
+    if (!dashboard?.monthlyTrend || dashboard.monthlyTrend.length === 0) {
+      // If we have total emissions but no monthly data, show a positive message
+      if (dashboard?.totalEmissions > 0) {
+        return { trend: "neutral", change: "Tracking started" };
+      }
+      return { trend: "neutral", change: "Add entries to start" };
+    }
+
+    if (dashboard.monthlyTrend.length === 1) {
+      return { trend: "neutral", change: `${dashboard.monthlyTrend[0].month} tracked` };
     }
 
     const lastMonth = dashboard.monthlyTrend[dashboard.monthlyTrend.length - 1]?.emissions || 0;
     const previousMonth = dashboard.monthlyTrend[dashboard.monthlyTrend.length - 2]?.emissions || 0;
 
     if (previousMonth === 0) {
-      return { trend: "neutral", change: "Not enough data" };
+      return { trend: "neutral", change: `${dashboard.monthlyTrend.length} months tracked` };
     }
 
     const changePercent = ((lastMonth - previousMonth) / previousMonth * 100).toFixed(1);
@@ -126,7 +134,7 @@ function StatsGrid() {
 
     return {
       trend,
-      change: `${Math.abs(changePercent)}% ${trend === "up" ? "increase" : trend === "down" ? "decrease" : ""}`.trim()
+      change: `${Math.abs(changePercent)}% ${trend === "up" ? "increase" : trend === "down" ? "decrease" : "stable"}`.trim()
     };
   };
 
