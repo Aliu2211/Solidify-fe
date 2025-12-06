@@ -14,7 +14,7 @@ export default function Library() {
     savedResources,
     fetchResources,
     fetchCategories,
-    fetchMySavedResources,
+    fetchMyFavorites,
     isLoading,
   } = useLibraryStore();
 
@@ -27,8 +27,8 @@ export default function Library() {
     // Fetch all resources and categories
     fetchResources({ limit: 50 });
     fetchCategories();
-    fetchMySavedResources();
-  }, [fetchResources, fetchCategories, fetchMySavedResources]);
+    fetchMyFavorites();
+  }, [fetchResources, fetchCategories, fetchMyFavorites]);
 
   // Filter resources
   const filteredResources = (viewMode === "saved" ? savedResources : resources).filter((resource) => {
@@ -96,7 +96,8 @@ function PageHeader({
 
   return (
     <div className="library-page-header">
-      <div className="library-header-content">
+      {/* Title and Stats Row */}
+      <div className="library-header-top">
         <div className="library-title-section">
           <h1 className="library-page-title">Resource Library</h1>
           <p className="library-page-subtitle">
@@ -116,7 +117,7 @@ function PageHeader({
             <span className="stat-icon">⭐</span>
             <div>
               <p className="stat-value">{savedCount}</p>
-              <p className="stat-label">Saved</p>
+              <p className="stat-label">Favorites</p>
             </div>
           </div>
           <div className="library-stat-card">
@@ -129,52 +130,51 @@ function PageHeader({
         </div>
       </div>
 
-      {/* View Mode Toggle */}
-      <div className="view-mode-toggle">
-        <button
-          className={`view-mode-btn ${viewMode === "all" ? "active" : ""}`}
-          onClick={() => setViewMode("all")}
-        >
-          <span className="material-symbols-outlined">grid_view</span>
-          All Resources
-        </button>
-        <button
-          className={`view-mode-btn ${viewMode === "saved" ? "active" : ""}`}
-          onClick={() => setViewMode("saved")}
-        >
-          <span className="material-symbols-outlined">bookmark</span>
-          My Saved
-        </button>
-      </div>
-
-      {/* Search Bar */}
-      <div className="library-search-container">
-        <div className="library-search-wrapper">
-          <span className="search-icon">🔍</span>
-          <input
-            type="text"
-            placeholder="Search resources by title, description, or tags..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="library-search-input"
-          />
-          {searchQuery && (
-            <button
-              className="search-clear-btn"
-              onClick={() => setSearchQuery("")}
-              aria-label="Clear search"
-            >
-              ✕
-            </button>
-          )}
+      {/* Controls Row */}
+      <div className="library-header-controls">
+        {/* View Mode Toggle */}
+        <div className="view-mode-toggle">
+          <button
+            className={`view-mode-btn ${viewMode === "all" ? "active" : ""}`}
+            onClick={() => setViewMode("all")}
+          >
+            <span className="material-symbols-outlined">grid_view</span>
+            All Resources
+          </button>
+          <button
+            className={`view-mode-btn ${viewMode === "saved" ? "active" : ""}`}
+            onClick={() => setViewMode("saved")}
+          >
+            <span className="material-symbols-outlined">bookmark</span>
+            My Favorites
+          </button>
         </div>
-      </div>
 
-      {/* Filters */}
-      <div className="library-filters">
-        {/* Category Filter */}
-        <div className="filter-group">
-          <label className="filter-label">Category</label>
+        {/* Search Bar */}
+        <div className="library-search-container">
+          <div className="library-search-wrapper">
+            <span className="search-icon">🔍</span>
+            <input
+              type="text"
+              placeholder="Search resources..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="library-search-input"
+            />
+            {searchQuery && (
+              <button
+                className="search-clear-btn"
+                onClick={() => setSearchQuery("")}
+                aria-label="Clear search"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Filters */}
+        <div className="library-filters">
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
@@ -182,7 +182,6 @@ function PageHeader({
           >
             <option value="all">All Categories</option>
             {categories.map((category) => {
-              // Handle both string and object formats
               const categoryValue = typeof category === 'string' ? category : category._id;
               const categoryLabel = typeof category === 'string' ? category : category._id;
               return (
@@ -192,11 +191,7 @@ function PageHeader({
               );
             })}
           </select>
-        </div>
 
-        {/* Type Filter */}
-        <div className="filter-group">
-          <label className="filter-label">Resource Type</label>
           <select
             value={selectedType}
             onChange={(e) => setSelectedType(e.target.value)}
@@ -234,14 +229,13 @@ function ResourcesGrid({ resources, savedResourceIds }) {
 
 // Resource Card Component
 function ResourceCard({ resource, isSaved }) {
-  const { viewResource, saveResource, unsaveResource, downloadResource } = useLibraryStore();
+  const { favoriteResource, unfavoriteResource, downloadResource } = useLibraryStore();
   const [isBookmarked, setIsBookmarked] = useState(isSaved);
   const [isHovered, setIsHovered] = useState(false);
   const [isBookmarking, setIsBookmarking] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
 
   const handleView = async () => {
-    await viewResource(resource._id);
     // Open resource URL in new tab
     if (resource.url) {
       window.open(resource.url, "_blank", "noopener,noreferrer");
@@ -257,20 +251,20 @@ function ResourceCard({ resource, isSaved }) {
     setIsBookmarking(true);
     try {
       if (isBookmarked) {
-        const response = await unsaveResource(resource._id);
+        const response = await unfavoriteResource(resource._id);
         if (response.success) {
           setIsBookmarked(false);
-          toast.success("📌 Resource removed from saved");
+          toast.success("📌 Resource removed from favorites");
         } else {
-          toast.error(response.message || "Failed to remove bookmark");
+          toast.error(response.message || "Failed to remove favorite");
         }
       } else {
-        const response = await saveResource(resource._id);
+        const response = await favoriteResource(resource._id);
         if (response.success) {
           setIsBookmarked(true);
-          toast.success("⭐ Resource saved successfully");
+          toast.success("⭐ Resource added to favorites");
         } else {
-          toast.error(response.message || "Failed to save resource");
+          toast.error(response.message || "Failed to favorite resource");
         }
       }
     } catch (error) {
@@ -349,7 +343,19 @@ function ResourceCard({ resource, isSaved }) {
       {/* Thumbnail */}
       <div className="resource-thumbnail" onClick={handleView}>
         {resource.thumbnail ? (
-          <img src={resource.thumbnail} alt={resource.title} className="resource-thumbnail-img" />
+          <img
+            src={resource.thumbnail}
+            alt={resource.title}
+            className="resource-thumbnail-img"
+            onError={(e) => {
+              e.target.style.display = 'none';
+              e.target.parentElement.innerHTML = `
+                <div class="resource-thumbnail-placeholder" style="background: linear-gradient(135deg, ${getTypeColor()}15 0%, ${getTypeColor()}30 100%)">
+                  <span class="material-symbols-outlined" style="color: ${getTypeColor()}">${getTypeIcon()}</span>
+                </div>
+              `;
+            }}
+          />
         ) : (
           <div className="resource-thumbnail-placeholder" style={{
             background: `linear-gradient(135deg, ${getTypeColor()}15 0%, ${getTypeColor()}30 100%)`
