@@ -1,0 +1,35 @@
+.confirmation-modal {
+  max-width: 500px !important;
+}
+
+.confirmation-modal .modal-header h3 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.confirmation-modal .text-red {
+  color: #dc2626;
+}
+
+.confirmation-modal .modal-body {
+  padding: 20px 0;
+  font-size: 16px;
+  color: #4b5563;
+  line-height: 1.5;
+}
+
+.spinner-small {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

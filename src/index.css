@@ -22,4 +22,5 @@ button {
 body {
   font-family: Inter, Arial;
   font-size: 18px;
+  padding-top: 70px; /* Account for fixed header height */
 }

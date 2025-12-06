@@ -1,121 +1,128 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Body } from "./Dashboard";
 import { Header } from "./Header";
-import { fetchLibraryItemById } from "../services/libraryApi";
+import { Profile } from "./Profile";
+import useLibraryStore from "../stores/libraryStore";
+import toast from "react-hot-toast";
+import "../styles/LibraryDetail.css";
 
 export default function LibraryDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [item, setItem] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { fetchResourceById, currentResource, isLoading } = useLibraryStore();
 
   useEffect(() => {
-    let mounted = true;
-    const load = async () => {
-      setLoading(true);
-      try {
-        const data = await fetchLibraryItemById(id);
-        if (mounted) {
-          setItem(data);
-        }
-      } catch (err) {
-        if (mounted) {
-          setError(err.message || "Failed to load resource");
-        }
-      } finally {
-        if (mounted) {
-          setLoading(false);
-        }
+    const loadResource = async () => {
+      if (!id) return;
+      const resource = await fetchResourceById(id);
+      if (!resource) {
+        toast.error("Resource not found");
+        navigate("/library");
       }
     };
-    load();
-    return () => {
-      mounted = false;
-    };
-  }, [id]);
+    loadResource();
+  }, [id, fetchResourceById, navigate]);
 
-  if (loading) {
+  if (isLoading) {
     return (
-      <div className="library-detail-loading">
-        <Header defaultTab="menu_book" />
-        <Body className="library">
-          <p>Loading...</p>
+      <div className="library-detail-page">
+        <Header><Profile /></Header>
+        <Body>
+          <div className="library-loading-container">
+            <div className="spinner"></div>
+            <p>Loading resource...</p>
+          </div>
         </Body>
       </div>
     );
   }
 
-  if (error || !item) {
-    return (
-      <div className="library-detail-error">
-        <Header defaultTab="menu_book" />
-        <Body className="library">
-          <p>Error: {error || "Resource not found"}</p>
-          <button onClick={() => navigate(-1)}>Back</button>
-        </Body>
-      </div>
-    );
-  }
+  if (!currentResource) return null;
 
-  // expected fields: title, content/summary, imageUrl/image, link/fileUrl, date, category, author
-  const title = item.title || item.name;
-  const image = item.imageUrl || item.image || "";
-  const content = item.content || item.summary || item.description || "";
-  const fileUrl = item.fileUrl || item.url || item.link || null;
-  const date = item.date || item.publishedAt || null;
-  const category = item.category || null;
-  const author = item.author || item.publisher || null;
+  const { title, description, content, type, url, thumbnail, author, createdAt, tags, category } = currentResource;
 
   return (
     <div className="library-detail-page">
-      <Header defaultTab="menu_book" />
-      <Body className="library">
-        <div className="library-detail-header">
-          <button className="back-btn" onClick={() => navigate(-1)}>
-            Back
+      <Header><Profile /></Header>
+      <Body>
+        <div className="library-detail-container">
+          <button className="back-nav-btn" onClick={() => navigate("/library")}>
+            <span className="material-symbols-outlined">arrow_back</span>
+            Back to Library
           </button>
-          <h1 className="library-detail-title">{title}</h1>
-          <div className="library-detail-meta">
-            {author && <span className="meta-item">By {author}</span>}
-            {date && (
-              <span className="meta-item">
-                {new Date(date).toLocaleDateString()}
-              </span>
-            )}
-            {category && <span className="meta-item">{category}</span>}
+
+          <div className="resource-content-wrapper">
+            <div className="resource-main-content">
+              <div className="resource-header-section">
+                <div className={`resource-type-badge type-${type}`}>{type}</div>
+                <h1 className="resource-detail-title">{title}</h1>
+                <div className="resource-meta-row">
+                  {category && (
+                    <span className="meta-item">
+                      <span className="material-symbols-outlined">folder</span> 
+                      {typeof category === 'object' ? category.name : category}
+                    </span>
+                  )}
+                  {createdAt && (
+                    <span className="meta-item">
+                      <span className="material-symbols-outlined">calendar_today</span> 
+                      {new Date(createdAt).toLocaleDateString()}
+                    </span>
+                  )}
+                  {author && (
+                    <span className="meta-item">
+                      <span className="material-symbols-outlined">person</span> 
+                      {author}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {thumbnail && (
+                <div className="resource-hero-image">
+                  <img src={thumbnail} alt={title} />
+                </div>
+              )}
+
+              <div className="resource-body">
+                <p className="resource-description-large">{description}</p>
+                {content && (
+                  <div className="resource-full-content" dangerouslySetInnerHTML={{ __html: content }} />
+                )}
+              </div>
+
+              {tags && tags.length > 0 && (
+                <div className="resource-tags-section">
+                  <h3>Tags</h3>
+                  <div className="tags-list">
+                    {tags.map((tag, index) => (
+                      <span key={index} className="tag-chip">{tag}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="resource-sidebar">
+              <div className="action-card">
+                <h3>Actions</h3>
+                {url && (
+                  <a href={url} target="_blank" rel="noopener noreferrer" className="action-btn primary">
+                    <span className="material-symbols-outlined">open_in_new</span>
+                    Open Resource
+                  </a>
+                )}
+                <button className="action-btn secondary" onClick={() => {
+                    navigator.clipboard.writeText(window.location.href);
+                    toast.success("Link copied to clipboard");
+                }}>
+                  <span className="material-symbols-outlined">share</span>
+                  Share Resource
+                </button>
+              </div>
+            </div>
           </div>
-        </div>
-
-        {image && (
-          <div className="library-detail-media">
-            <img src={image} alt={title} />
-          </div>
-        )}
-
-        <div
-          className="library-detail-content"
-          dangerouslySetInnerHTML={{ __html: content }}
-        />
-
-        <div className="library-detail-actions">
-          {fileUrl && (
-            <a
-              className="btn btn-primary"
-              href={fileUrl}
-              target="_blank"
-              rel="noreferrer"
-            >
-              Open / Download
-            </a>
-          )}
-          <button
-            className="btn"
-            onClick={() => navigator.clipboard?.writeText(window.location.href)}
-          >
-            Copy Link
-          </button>
         </div>
       </Body>
     </div>

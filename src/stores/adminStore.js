@@ -47,6 +47,10 @@ const useAdminStore = create((set, get) => ({
 
   // Dashboard Stats
   dashboardStats: {
+    totalUsers: 0,
+    usersByRole: { user: 0, manager: 0, admin: 0 },
+    verifiedUsers: 0,
+    recentRegistrations: 0,
     totalCourses: 0,
     totalResources: 0,
     totalNews: 0,
@@ -54,6 +58,12 @@ const useAdminStore = create((set, get) => ({
   },
   statsLoading: false,
   statsLastFetch: null,
+
+  // Users
+  users: [],
+  currentUser: null,
+  usersLoading: false,
+  usersLastFetch: null,
 
   // General
   error: null,
@@ -126,7 +136,7 @@ const useAdminStore = create((set, get) => ({
       if (response.success) {
         set({ coursesLoading: false });
         handleApiSuccess('Course created successfully!');
-        await get().fetchCourses();
+        await get().fetchCourses({}, true); // Force refresh
         return { success: true, data: response.data };
       } else {
         set({ error: response.message, coursesLoading: false });
@@ -146,7 +156,7 @@ const useAdminStore = create((set, get) => ({
       if (response.success) {
         set({ coursesLoading: false });
         handleApiSuccess('Course updated successfully!');
-        await get().fetchCourses();
+        await get().fetchCourses({}, true); // Force refresh
         return { success: true, data: response.data };
       } else {
         set({ error: response.message, coursesLoading: false });
@@ -166,7 +176,7 @@ const useAdminStore = create((set, get) => ({
       if (response.success) {
         set({ coursesLoading: false });
         handleApiSuccess('Course deleted successfully!');
-        await get().fetchCourses();
+        await get().fetchCourses({}, true); // Force refresh
         return { success: true };
       } else {
         set({ error: response.message, coursesLoading: false });
@@ -229,7 +239,7 @@ const useAdminStore = create((set, get) => ({
       if (response.success) {
         set({ resourcesLoading: false });
         handleApiSuccess('Resource created successfully!');
-        await get().fetchResources();
+        await get().fetchResources({}, true); // Force refresh
         return { success: true, data: response.data };
       } else {
         set({ error: response.message, resourcesLoading: false });
@@ -249,7 +259,7 @@ const useAdminStore = create((set, get) => ({
       if (response.success) {
         set({ resourcesLoading: false });
         handleApiSuccess('Resource updated successfully!');
-        await get().fetchResources();
+        await get().fetchResources({}, true); // Force refresh
         return { success: true, data: response.data };
       } else {
         set({ error: response.message, resourcesLoading: false });
@@ -269,7 +279,7 @@ const useAdminStore = create((set, get) => ({
       if (response.success) {
         set({ resourcesLoading: false });
         handleApiSuccess('Resource deleted successfully!');
-        await get().fetchResources();
+        await get().fetchResources({}, true); // Force refresh
         return { success: true };
       } else {
         set({ error: response.message, resourcesLoading: false });
@@ -435,7 +445,7 @@ const useAdminStore = create((set, get) => ({
       if (response.success) {
         set({ knowledgeLoading: false });
         handleApiSuccess('Knowledge article created successfully!');
-        await get().fetchKnowledge();
+        await get().fetchKnowledge({}, true); // Force refresh
         return { success: true, data: response.data };
       } else {
         set({ error: response.message, knowledgeLoading: false });
@@ -547,6 +557,107 @@ const useAdminStore = create((set, get) => ({
     } catch (error) {
       const errorMsg = handleApiError(error);
       set({ error: errorMsg, organizationsLoading: false });
+      return { success: false, message: errorMsg };
+    }
+  },
+
+  // ============================================
+  // USER MANAGEMENT ACTIONS
+  // ============================================
+
+  fetchUsers: async (params = {}, forceRefresh = false) => {
+    const state = get();
+    const now = Date.now();
+    const isCacheValid = state.usersLastFetch && (now - state.usersLastFetch < CACHE_DURATION);
+
+    // Return cached data if available and fresh, unless force refresh
+    if (!forceRefresh && isCacheValid && state.users.length > 0) {
+      console.log('📦 Using cached users data');
+      return state.users;
+    }
+
+    // Prevent duplicate calls if already loading
+    if (state.usersLoading) {
+      console.log('⏳ Users already loading, skipping duplicate request');
+      return state.users;
+    }
+
+    console.log('🔄 Fetching fresh users data from API');
+    set({ usersLoading: true, error: null });
+    try {
+      const response = await adminService.getUsers(params);
+      if (response.success) {
+        set({
+          users: response.data.users || response.data,
+          usersLoading: false,
+          usersLastFetch: Date.now()
+        });
+        return response.data.users || response.data;
+      } else {
+        set({ error: response.message, usersLoading: false });
+        return [];
+      }
+    } catch (error) {
+      const errorMsg = handleApiError(error);
+      set({ error: errorMsg, usersLoading: false });
+      return [];
+    }
+  },
+
+  fetchUserById: async (userId) => {
+    set({ usersLoading: true, error: null });
+    try {
+      const response = await adminService.getUserById(userId);
+      if (response.success) {
+        set({ currentUser: response.data, usersLoading: false });
+        return response.data;
+      } else {
+        set({ error: response.message, usersLoading: false });
+        return null;
+      }
+    } catch (error) {
+      const errorMsg = handleApiError(error);
+      set({ error: errorMsg, usersLoading: false });
+      return null;
+    }
+  },
+
+  updateUser: async (userId, userData) => {
+    set({ usersLoading: true, error: null });
+    try {
+      const response = await adminService.updateUser(userId, userData);
+      if (response.success) {
+        set({ usersLoading: false });
+        handleApiSuccess('User updated successfully!');
+        await get().fetchUsers({}, true); // Force refresh
+        return { success: true, data: response.data };
+      } else {
+        set({ error: response.message, usersLoading: false });
+        return { success: false, message: response.message };
+      }
+    } catch (error) {
+      const errorMsg = handleApiError(error);
+      set({ error: errorMsg, usersLoading: false });
+      return { success: false, message: errorMsg };
+    }
+  },
+
+  deleteUser: async (userId) => {
+    set({ usersLoading: true, error: null });
+    try {
+      const response = await adminService.deleteUser(userId);
+      if (response.success) {
+        set({ usersLoading: false });
+        handleApiSuccess('User deleted successfully!');
+        await get().fetchUsers({}, true); // Force refresh
+        return { success: true };
+      } else {
+        set({ error: response.message, usersLoading: false });
+        return { success: false, message: response.message };
+      }
+    } catch (error) {
+      const errorMsg = handleApiError(error);
+      set({ error: errorMsg, usersLoading: false });
       return { success: false, message: errorMsg };
     }
   },

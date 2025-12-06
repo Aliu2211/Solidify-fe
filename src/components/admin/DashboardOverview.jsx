@@ -14,6 +14,7 @@ export default function DashboardOverview() {
   useEffect(() => {
     // Only fetch if stats haven't been loaded yet (all values are 0)
     const hasNoStats =
+      dashboardStats.totalUsers === 0 &&
       dashboardStats.totalCourses === 0 &&
       dashboardStats.totalResources === 0 &&
       dashboardStats.totalNews === 0 &&
@@ -30,6 +31,14 @@ export default function DashboardOverview() {
   }, []); // Only run once on mount
 
   const statsCards = [
+    {
+      title: 'Total Users',
+      value: dashboardStats.totalUsers,
+      icon: 'group',
+      color: '#3b82f6',
+      bgColor: '#dbeafe',
+      path: '/admin/users',
+    },
     {
       title: 'Total Courses',
       value: dashboardStats.totalCourses,
@@ -65,6 +74,12 @@ export default function DashboardOverview() {
   ];
 
   const quickActions = [
+    {
+      label: 'Add User',
+      icon: 'person_add',
+      color: '#3b82f6',
+      path: '/admin/users',
+    },
     {
       label: 'Create Course',
       icon: 'add_circle',

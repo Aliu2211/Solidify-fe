@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Body } from "./Dashboard";
 import { Header } from "./Header";
 import { Profile } from "./Profile";
@@ -96,7 +97,7 @@ function PageHeader({
 
   return (
     <div className="library-page-header">
-      <div className="library-header-content">
+      <div className="library-header-left">
         <div className="library-title-section">
           <h1 className="library-page-title">Resource Library</h1>
           <p className="library-page-subtitle">
@@ -129,86 +130,86 @@ function PageHeader({
         </div>
       </div>
 
-      {/* View Mode Toggle */}
-      <div className="view-mode-toggle">
-        <button
-          className={`view-mode-btn ${viewMode === "all" ? "active" : ""}`}
-          onClick={() => setViewMode("all")}
-        >
-          <span className="material-symbols-outlined">grid_view</span>
-          All Resources
-        </button>
-        <button
-          className={`view-mode-btn ${viewMode === "saved" ? "active" : ""}`}
-          onClick={() => setViewMode("saved")}
-        >
-          <span className="material-symbols-outlined">favorite</span>
-          My Favorites
-        </button>
-      </div>
-
-      {/* Search Bar */}
-      <div className="library-search-container">
-        <div className="library-search-wrapper">
-          <span className="search-icon">🔍</span>
-          <input
-            type="text"
-            placeholder="Search resources by title, description, or tags..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="library-search-input"
-          />
-          {searchQuery && (
-            <button
-              className="search-clear-btn"
-              onClick={() => setSearchQuery("")}
-              aria-label="Clear search"
+      <div className="library-header-right">
+        {/* Filters */}
+        <div className="library-filters">
+          <div className="filter-group">
+            <label className="filter-label">Category</label>
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="filter-select"
             >
-              ✕
-            </button>
-          )}
-        </div>
-      </div>
+              <option value="all">All Categories</option>
+              {categories.map((category) => {
+                const categoryValue = typeof category === 'string' ? category : category._id;
+                const categoryLabel = typeof category === 'string' ? category : category._id;
+                return (
+                  <option key={categoryValue} value={categoryValue}>
+                    {categoryLabel}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
 
-      {/* Filters */}
-      <div className="library-filters">
-        {/* Category Filter */}
-        <div className="filter-group">
-          <label className="filter-label">Category</label>
-          <select
-            value={selectedCategory}
-            onChange={(e) => setSelectedCategory(e.target.value)}
-            className="filter-select"
-          >
-            <option value="all">All Categories</option>
-            {categories.map((category) => {
-              // Handle both string and object formats
-              const categoryValue = typeof category === 'string' ? category : category._id;
-              const categoryLabel = typeof category === 'string' ? category : category._id;
-              return (
-                <option key={categoryValue} value={categoryValue}>
-                  {categoryLabel}
+          <div className="filter-group">
+            <label className="filter-label">Resource Type</label>
+            <select
+              value={selectedType}
+              onChange={(e) => setSelectedType(e.target.value)}
+              className="filter-select"
+            >
+              <option value="all">All Types</option>
+              {resourceTypes.map((type) => (
+                <option key={type} value={type}>
+                  {type.charAt(0).toUpperCase() + type.slice(1).replace("-", " ")}
                 </option>
-              );
-            })}
-          </select>
+              ))}
+            </select>
+          </div>
         </div>
 
-        {/* Type Filter */}
-        <div className="filter-group">
-          <label className="filter-label">Resource Type</label>
-          <select
-            value={selectedType}
-            onChange={(e) => setSelectedType(e.target.value)}
-            className="filter-select"
-          >
-            <option value="all">All Types</option>
-            {resourceTypes.map((type) => (
-              <option key={type} value={type}>
-                {type.charAt(0).toUpperCase() + type.slice(1).replace("-", " ")}
-              </option>
-            ))}
-          </select>
+        {/* Actions Row */}
+        <div className="library-actions-row">
+          <div className="view-mode-toggle">
+            <button
+              className={`view-mode-btn ${viewMode === "all" ? "active" : ""}`}
+              onClick={() => setViewMode("all")}
+            >
+              <span className="material-symbols-outlined">grid_view</span>
+              All Resources
+            </button>
+            <button
+              className={`view-mode-btn ${viewMode === "saved" ? "active" : ""}`}
+              onClick={() => setViewMode("saved")}
+            >
+              <span className="material-symbols-outlined">favorite</span>
+              My Favorites
+            </button>
+          </div>
+
+          <div className="library-search-container">
+            <div className="library-search-wrapper">
+              <span className="search-icon">🔍</span>
+              <input
+                type="text"
+                placeholder="Search resources..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="library-search-input"
+              />
+              {searchQuery && (
+                <button
+                  className="search-clear-btn"
+                  onClick={() => setSearchQuery("")}
+                  aria-label="Clear search"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -234,30 +235,15 @@ function ResourcesGrid({ resources, savedResourceIds }) {
 
 // Resource Card Component
 function ResourceCard({ resource, isSaved }) {
-  const { favoriteResource, unfavoriteResource, downloadResource, fetchResourceById } = useLibraryStore();
+  const navigate = useNavigate();
+  const { favoriteResource, unfavoriteResource, downloadResource } = useLibraryStore();
   const [isBookmarked, setIsBookmarked] = useState(isSaved);
   const [isHovered, setIsHovered] = useState(false);
   const [isBookmarking, setIsBookmarking] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
-  const [isViewing, setIsViewing] = useState(false);
 
-  const handleView = async () => {
-    setIsViewing(true);
-    try {
-      // Fetch full resource details by ID (increments view count)
-      const fullResource = await fetchResourceById(resource._id);
-
-      if (fullResource && fullResource.url) {
-        // Open resource URL in new tab
-        window.open(fullResource.url, "_blank", "noopener,noreferrer");
-      } else {
-        toast.error("No URL available for this resource");
-      }
-    } catch (error) {
-      toast.error("Failed to load resource details");
-    } finally {
-      setIsViewing(false);
-    }
+  const handleView = () => {
+    navigate(`/library/${resource._id}`);
   };
 
   const handleBookmark = async (e) => {
@@ -425,14 +411,13 @@ function ResourceCard({ resource, isSaved }) {
       {/* Card Footer */}
       <div className="resource-card-footer">
         <button
-          className={`resource-action-btn view-btn ${isViewing ? "loading" : ""}`}
+          className="resource-action-btn view-btn"
           onClick={handleView}
-          disabled={isViewing}
           style={{ background: getTypeColor() }}
         >
-          <span className="btn-text">{isViewing ? "Loading..." : "View Resource"}</span>
+          <span className="btn-text">View Resource</span>
           <span className="material-symbols-outlined btn-icon">
-            {isViewing ? "hourglass_empty" : "open_in_new"}
+            visibility
           </span>
         </button>
         {resource.type === "pdf" && resource.downloadUrl && (

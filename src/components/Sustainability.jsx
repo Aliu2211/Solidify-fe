@@ -1,135 +1,24 @@
-import { useEffect, useState, useRef, useCallback } from "react";
-import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { Body } from "./Dashboard";
 import { Header } from "./Header";
 import { Profile } from "./Profile";
-import { Contents } from "./Contents";
-import useKnowledgeStore from "../stores/knowledgeStore";
 import useCourseStore from "../stores/courseStore";
 import { NewsGridSkeleton } from "./common/Skeleton";
 import toast from "react-hot-toast";
 
 export default function Sustainability() {
-  const { articles, fetchArticles, searchArticles, isLoading: articlesLoading } = useKnowledgeStore();
   const { courses, myProgress, fetchCourses, fetchMyProgress, isLoading: coursesLoading } = useCourseStore();
-  const [activeTab, setActiveTab] = useState("courses"); // "courses" or "knowledge"
-  const [levels, setLevels] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isSearching, setIsSearching] = useState(false);
-  const [searchResults, setSearchResults] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [showCourseModal, setShowCourseModal] = useState(false);
-  const debounceTimer = useRef(null);
-  const location = useLocation();
 
   useEffect(() => {
-    // Fetch all knowledge articles
-    fetchArticles({ limit: 50 });
     // Fetch courses
     fetchCourses();
     // Fetch my progress
     fetchMyProgress();
-  }, [fetchArticles, fetchCourses, fetchMyProgress]);
+  }, [fetchCourses, fetchMyProgress]);
 
-  // Handle hash navigation (from search results)
-  useEffect(() => {
-    if (location.hash) {
-      const slug = location.hash.substring(1); // Remove the #
-      setTimeout(() => {
-        const element = document.getElementById(slug);
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth", block: "center" });
-          element.classList.add("highlight-article");
-          setTimeout(() => element.classList.remove("highlight-article"), 2000);
-        }
-      }, 300); // Wait for content to render
-    }
-  }, [location.hash, articles]);
-
-  // Backend search with debouncing
-  const performSearch = useCallback(async (query) => {
-    if (!query.trim()) {
-      setSearchResults([]);
-      setIsSearching(false);
-      return;
-    }
-
-    setIsSearching(true);
-    try {
-      const results = await searchArticles(query, { limit: 50 });
-      setSearchResults(results || []);
-    } catch (error) {
-      console.error("Search error:", error);
-      setSearchResults([]);
-    } finally {
-      setIsSearching(false);
-    }
-  }, [searchArticles]);
-
-  // Debounce search input
-  useEffect(() => {
-    if (debounceTimer.current) {
-      clearTimeout(debounceTimer.current);
-    }
-
-    if (searchQuery.trim()) {
-      debounceTimer.current = setTimeout(() => {
-        performSearch(searchQuery);
-      }, 300);
-    } else {
-      setSearchResults([]);
-      setIsSearching(false);
-    }
-
-    return () => {
-      if (debounceTimer.current) {
-        clearTimeout(debounceTimer.current);
-      }
-    };
-  }, [searchQuery, performSearch]);
-
-  useEffect(() => {
-    // Use search results if searching, otherwise use all articles
-    const articlesToGroup = searchQuery.trim() && searchResults.length > 0
-      ? searchResults
-      : articles;
-
-    // Group articles by sustainability level
-    if (articlesToGroup && articlesToGroup.length > 0) {
-      const levelData = [
-        {
-          id: 1,
-          title: "Foundation & Measurement",
-          level: "foundation",
-          message:
-            "Start your sustainability journey with essential knowledge and measurement tools. Learn the basics of carbon tracking, emission scopes, and foundational practices for SMEs.",
-          articles: articlesToGroup.filter((a) => a.sustainabilityLevel === 1 || a.level === "foundation"),
-        },
-        {
-          id: 2,
-          title: "Efficiency and Integration",
-          level: "efficiency",
-          message:
-            "Enhance your operations with advanced efficiency strategies. Explore integration techniques, optimization methods, and tools to improve your carbon management.",
-          articles: articlesToGroup.filter((a) => a.sustainabilityLevel === 2 || a.level === "efficiency"),
-        },
-        {
-          id: 3,
-          title: "Transformation & Net Zero Leadership",
-          level: "transformation",
-          message:
-            "Lead the transformation toward Net Zero. Discover cutting-edge approaches, leadership strategies, and comprehensive solutions for achieving carbon neutrality.",
-          articles: articlesToGroup.filter((a) => a.sustainabilityLevel === 3 || a.level === "transformation"),
-        },
-      ];
-
-      setLevels(levelData);
-    }
-  }, [articles, searchQuery, searchResults]);
-
-  const isLoading = articlesLoading || coursesLoading;
-
-  if (isLoading && courses.length === 0 && articles.length === 0) {
+  if (coursesLoading && courses.length === 0) {
     return (
       <div className="sustainability-page">
         <Header defaultTab="relax">
@@ -152,38 +41,19 @@ export default function Sustainability() {
       <Body className="sustainability">
         {/* Modern Page Header */}
         <PageHeader
-          totalArticles={articles.length}
           totalCourses={courses.length}
           myProgress={myProgress}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          isSearching={isSearching}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
         />
 
-        {/* Tab Content */}
-        {activeTab === "courses" ? (
-          <CoursesContent
-            courses={courses}
-            myProgress={myProgress}
-            onCourseClick={(course) => {
-              setSelectedCourse(course);
-              setShowCourseModal(true);
-            }}
-          />
-        ) : (
-          <>
-            {/* Knowledge Levels Content */}
-            {levels.length > 0 ? (
-              <Contents levels={levels} searchQuery={searchQuery} isSearching={isSearching} />
-            ) : searchQuery.trim() && !isSearching ? (
-              <NoSearchResults searchQuery={searchQuery} />
-            ) : (
-              <EmptyState />
-            )}
-          </>
-        )}
+        {/* Courses Content */}
+        <CoursesContent
+          courses={courses}
+          myProgress={myProgress}
+          onCourseClick={(course) => {
+            setSelectedCourse(course);
+            setShowCourseModal(true);
+          }}
+        />
 
         {/* Course Detail Modal */}
         {showCourseModal && selectedCourse && (
@@ -202,14 +72,14 @@ export default function Sustainability() {
 }
 
 // Modern Page Header Component
-function PageHeader({ totalArticles, totalCourses, myProgress, searchQuery, setSearchQuery, isSearching, activeTab, setActiveTab }) {
+function PageHeader({ totalCourses, myProgress }) {
   return (
     <div className="knowledge-page-header">
       <div className="knowledge-header-content">
         <div className="knowledge-title-section">
           <h1 className="knowledge-page-title">Sustainability Learning Center</h1>
           <p className="knowledge-page-subtitle">
-            Master sustainability through structured courses and comprehensive knowledge resources
+            Master sustainability through structured learning courses
           </p>
         </div>
 
@@ -219,13 +89,6 @@ function PageHeader({ totalArticles, totalCourses, myProgress, searchQuery, setS
             <div>
               <p className="stat-value">{totalCourses}</p>
               <p className="stat-label">Courses</p>
-            </div>
-          </div>
-          <div className="knowledge-stat-card">
-            <span className="stat-icon">📚</span>
-            <div>
-              <p className="stat-value">{totalArticles}</p>
-              <p className="stat-label">Articles</p>
             </div>
           </div>
           {myProgress && (
@@ -238,68 +101,6 @@ function PageHeader({ totalArticles, totalCourses, myProgress, searchQuery, setS
             </div>
           )}
         </div>
-      </div>
-
-      {/* Tab Navigation */}
-      <div className="sustainability-tabs">
-        <button
-          className={`tab-button ${activeTab === "courses" ? "active" : ""}`}
-          onClick={() => setActiveTab("courses")}
-        >
-          <span className="material-symbols-outlined">school</span>
-          Learning Courses
-        </button>
-        <button
-          className={`tab-button ${activeTab === "knowledge" ? "active" : ""}`}
-          onClick={() => setActiveTab("knowledge")}
-        >
-          <span className="material-symbols-outlined">menu_book</span>
-          Knowledge Base
-        </button>
-      </div>
-
-      {/* Search Bar - Only show for knowledge tab */}
-      {activeTab === "knowledge" && (
-        <div className="knowledge-search-container">
-          <div className="knowledge-search-wrapper">
-            <span className="search-icon">{isSearching ? "⏳" : "🔍"}</span>
-            <input
-              type="text"
-              placeholder="Search articles by title, content, summary, or tags..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="knowledge-search-input"
-            />
-            {searchQuery && !isSearching && (
-              <button
-                className="search-clear-btn"
-                onClick={() => setSearchQuery("")}
-                aria-label="Clear search"
-              >
-                ✕
-              </button>
-            )}
-          </div>
-          {isSearching && (
-            <p className="search-status-text">Searching...</p>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// No Search Results Component
-function NoSearchResults({ searchQuery }) {
-  return (
-    <div className="knowledge-empty-state">
-      <div className="empty-state-content">
-        <span className="empty-state-icon">🔍</span>
-        <h3>No Results Found</h3>
-        <p>
-          No articles found matching "<strong>{searchQuery}</strong>".
-          Try different keywords or browse all articles.
-        </p>
       </div>
     </div>
   );
@@ -329,22 +130,6 @@ function PageHeaderSkeleton() {
             }}
           />
         </div>
-      </div>
-    </div>
-  );
-}
-
-// Empty State Component
-function EmptyState() {
-  return (
-    <div className="knowledge-empty-state">
-      <div className="empty-state-content">
-        <span className="empty-state-icon">📚</span>
-        <h3>No Knowledge Articles Available</h3>
-        <p>
-          The knowledge base is currently being updated. Check back soon for
-          sustainability insights and resources.
-        </p>
       </div>
     </div>
   );
@@ -517,9 +302,9 @@ function CoursesContent({ courses, myProgress, onCourseClick }) {
 function CourseCard({ course, myProgress, onClick, levelColor }) {
   // Find if user has progress on this course
   const courseProgress = myProgress?.coursesInProgress?.find(
-    (cp) => cp.course?._id === course._id
+    (cp) => (cp.course?._id || cp.course) === course._id
   ) || myProgress?.completedCourses?.find(
-    (cp) => cp.course?._id === course._id
+    (cp) => (cp.course?._id || cp.course) === course._id
   );
 
   const isCompleted = courseProgress?.status === "completed";
@@ -572,7 +357,19 @@ function CourseCard({ course, myProgress, onClick, levelColor }) {
       {/* Thumbnail Section */}
       <div className="course-card-header">
         {course.thumbnail ? (
-          <img src={course.thumbnail} alt={course.title} className="course-thumbnail-img" />
+          <img
+            src={course.thumbnail}
+            alt={course.title}
+            className="course-thumbnail-img"
+            onError={(e) => {
+              e.target.style.display = 'none';
+              e.target.parentElement.innerHTML = `
+                <div class="course-thumbnail-placeholder" style="background: linear-gradient(135deg, ${levelColor}15 0%, ${levelColor}25 100%)">
+                  <span class="material-symbols-outlined" style="color: ${levelColor}">school</span>
+                </div>
+              ` + e.target.parentElement.innerHTML.substring(e.target.parentElement.innerHTML.indexOf('</div>') + 6);
+            }}
+          />
         ) : (
           <div className="course-thumbnail-placeholder" style={{
             background: `linear-gradient(135deg, ${levelColor}15 0%, ${levelColor}25 100%)`
@@ -682,9 +479,9 @@ function CourseModal({ course, myProgress, onClose }) {
   const [quizScore, setQuizScore] = useState("");
 
   const courseProgress = myProgress?.coursesInProgress?.find(
-    (cp) => cp.course?._id === course._id
+    (cp) => (cp.course?._id || cp.course) === course._id
   ) || myProgress?.completedCourses?.find(
-    (cp) => cp.course?._id === course._id
+    (cp) => (cp.course?._id || cp.course) === course._id
   );
 
   const isCompleted = courseProgress?.status === "completed";
@@ -745,7 +542,19 @@ function CourseModal({ course, myProgress, onClose }) {
 
         <div className="course-modal-header">
           {course.thumbnail ? (
-            <img src={course.thumbnail} alt={course.title} className="modal-course-thumbnail" />
+            <img
+              src={course.thumbnail}
+              alt={course.title}
+              className="modal-course-thumbnail"
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.parentElement.innerHTML = `
+                  <div class="modal-course-thumbnail-placeholder">
+                    <span class="material-symbols-outlined">school</span>
+                  </div>
+                ` + e.target.parentElement.innerHTML.substring(e.target.parentElement.innerHTML.indexOf('</div>') + 6);
+              }}
+            />
           ) : (
             <div className="modal-course-thumbnail-placeholder">
               <span className="material-symbols-outlined">school</span>

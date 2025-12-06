@@ -6,8 +6,15 @@ import useAuthStore from "../stores/authStore";
 import toast from "react-hot-toast";
 
 export default function Settings() {
-  const { user, changePassword } = useAuthStore();
+  const { user, changePassword, updateProfile, isLoading } = useAuthStore();
   const [activeSection, setActiveSection] = useState("profile");
+
+  // Profile settings state
+  const [profileData, setProfileData] = useState({
+    firstName: user?.firstName || "",
+    lastName: user?.lastName || "",
+    email: user?.email || "",
+  });
 
   // Account settings state
   const [accountData, setAccountData] = useState({
@@ -15,6 +22,14 @@ export default function Settings() {
     newPassword: "",
     confirmPassword: "",
   });
+
+  const handleProfileUpdate = async (e) => {
+    e.preventDefault();
+    const result = await updateProfile(profileData);
+    if (result.success) {
+      toast.success("Profile updated successfully!");
+    }
+  };
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
@@ -64,13 +79,20 @@ export default function Settings() {
           {/* Settings Content */}
           <main className="settings-content">
             {activeSection === "profile" && (
-              <ProfileSettings user={user} />
+              <ProfileSettings
+                user={user}
+                profileData={profileData}
+                setProfileData={setProfileData}
+                onSave={handleProfileUpdate}
+                isLoading={isLoading}
+              />
             )}
             {activeSection === "account" && (
               <AccountSettings
                 accountData={accountData}
                 setAccountData={setAccountData}
                 onSave={handlePasswordChange}
+                isLoading={isLoading}
               />
             )}
           </main>
@@ -81,24 +103,40 @@ export default function Settings() {
 }
 
 // Profile Settings Component
-function ProfileSettings({ user }) {
+function ProfileSettings({ user, profileData, setProfileData, onSave, isLoading }) {
   return (
     <div className="settings-section">
       <div className="section-header">
         <h3 className="section-title">Profile Information</h3>
         <p className="section-description">
-          View your personal information on Solidify
+          Update your personal information
         </p>
       </div>
 
-      <div className="settings-form">
+      <form onSubmit={onSave} className="settings-form">
         <div className="form-group">
-          <label className="form-label">Full Name</label>
+          <label className="form-label">First Name</label>
           <input
             type="text"
             className="form-input"
-            value={user?.fullName || `${user?.firstName || ""} ${user?.lastName || ""}`.trim()}
-            disabled
+            value={profileData.firstName}
+            onChange={(e) => setProfileData({ ...profileData, firstName: e.target.value })}
+            placeholder="Enter your first name"
+            required
+            disabled={isLoading}
+          />
+        </div>
+
+        <div className="form-group">
+          <label className="form-label">Last Name</label>
+          <input
+            type="text"
+            className="form-input"
+            value={profileData.lastName}
+            onChange={(e) => setProfileData({ ...profileData, lastName: e.target.value })}
+            placeholder="Enter your last name"
+            required
+            disabled={isLoading}
           />
         </div>
 
@@ -107,8 +145,11 @@ function ProfileSettings({ user }) {
           <input
             type="email"
             className="form-input"
-            value={user?.email || ""}
-            disabled
+            value={profileData.email}
+            onChange={(e) => setProfileData({ ...profileData, email: e.target.value })}
+            placeholder="Enter your email"
+            required
+            disabled={isLoading}
           />
         </div>
 
@@ -120,6 +161,7 @@ function ProfileSettings({ user }) {
             value={user?.userId || ""}
             disabled
           />
+          <p className="form-help">User ID cannot be changed</p>
         </div>
 
         <div className="form-group">
@@ -130,6 +172,7 @@ function ProfileSettings({ user }) {
             value={user?.organization?.name || ""}
             disabled
           />
+          <p className="form-help">Contact admin to change organization</p>
         </div>
 
         <div className="form-group">
@@ -140,14 +183,21 @@ function ProfileSettings({ user }) {
             value={user?.role || ""}
             disabled
           />
+          <p className="form-help">Role is assigned by administrators</p>
         </div>
-      </div>
+
+        <div className="form-actions">
+          <button type="submit" className="btn-primary" disabled={isLoading}>
+            {isLoading ? "Saving..." : "Save Changes"}
+          </button>
+        </div>
+      </form>
     </div>
   );
 }
 
 // Account Settings Component
-function AccountSettings({ accountData, setAccountData, onSave }) {
+function AccountSettings({ accountData, setAccountData, onSave, isLoading }) {
   return (
     <div className="settings-section">
       <div className="section-header">
@@ -197,8 +247,8 @@ function AccountSettings({ accountData, setAccountData, onSave }) {
         </div>
 
         <div className="form-actions">
-          <button type="submit" className="btn-primary">
-            Change Password
+          <button type="submit" className="btn-primary" disabled={isLoading}>
+            {isLoading ? "Changing..." : "Change Password"}
           </button>
         </div>
       </form>

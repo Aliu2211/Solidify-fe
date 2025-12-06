@@ -73,6 +73,14 @@ class AuthService {
   }
 
   /**
+   * Update user profile
+   */
+  async updateProfile(profileData) {
+    const response = await api.put(API_ENDPOINTS.PROFILE, profileData);
+    return response.data;
+  }
+
+  /**
    * Get list of organizations (for registration)
    */
   async getOrganizations() {

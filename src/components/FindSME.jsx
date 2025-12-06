@@ -106,7 +106,8 @@ export default function FindSME() {
       if (response.success) {
         toast.success(`Group conversation created with ${selectedOrganization.name}!`);
         setShowModal(false);
-        navigate("/chat");
+        const conversationId = response.data?._id || response.data?.conversation?._id;
+        navigate("/chat", { state: { conversationId } });
       } else {
         toast.error(response.message || "Failed to create conversation");
       }
@@ -142,7 +143,8 @@ export default function FindSME() {
         const user = modalUsers.find((u) => u._id === userId);
         toast.success(`Direct conversation created with ${user?.firstName || "user"}!`);
         setShowModal(false);
-        navigate("/chat");
+        const conversationId = response.data?._id || response.data?.conversation?._id;
+        navigate("/chat", { state: { conversationId } });
       } else {
         toast.error(response.message || "Failed to create conversation");
       }

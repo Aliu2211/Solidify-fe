@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import useAdminStore from '../../stores/adminStore';
 import LoadingSpinner from '../common/LoadingSpinner';
-import ConfirmationModal from '../common/ConfirmationModal';
 import toast from 'react-hot-toast';
 
 /**
@@ -9,50 +8,44 @@ import toast from 'react-hot-toast';
  * Full CRUD management for news articles
  */
 export default function NewsManager() {
-  const { news, newsLoading, fetchNews, createNews, updateNews, deleteNews } = useAdminStore();
+  const { news, newsLoading, fetchNews, createNews, updateNews, deleteNews } =
+    useAdminStore();
 
   const [showModal, setShowModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [editingNews, setEditingNews] = useState(null);
-  const [deletingNews, setDeletingNews] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(null);
 
   const [formData, setFormData] = useState({
     title: '',
     content: '',
-    summary: '',
-    category: 'policy',
+    excerpt: '',
+    category: 'Sustainability',
+    author: '',
     imageUrl: '',
     tags: [],
-    source: '',
-    sourceUrl: '',
-    featured: false,
+    status: 'draft',
   });
 
   useEffect(() => {
-    // Stagger API calls to prevent rate limiting (4 seconds delay for third manager)
-    const timer = setTimeout(() => {
-      fetchNews();
-    }, 4000);
-    return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Only run once on mount
+    fetchNews();
+  }, [fetchNews]);
 
-  const categories = ['policy', 'technology', 'success-stories', 'events', 'global-trends'];
+  const categories = ['Sustainability', 'Carbon Offsetting', 'Climate Change', 'Green Technology', 'Policy', 'Research'];
+  const statuses = ['draft', 'published', 'archived'];
 
   const openCreateModal = () => {
     setEditingNews(null);
     setFormData({
       title: '',
       content: '',
-      summary: '',
-      category: 'policy',
+      excerpt: '',
+      category: 'Sustainability',
+      author: '',
       imageUrl: '',
       tags: [],
-      source: '',
-      sourceUrl: '',
-      featured: false,
+      status: 'draft',
     });
     setShowModal(true);
   };
@@ -62,30 +55,19 @@ export default function NewsManager() {
     setFormData({
       title: article.title || '',
       content: article.content || '',
-      summary: article.summary || '',
-      category: article.category || 'policy',
+      excerpt: article.excerpt || '',
+      category: article.category || 'Sustainability',
+      author: article.author || '',
       imageUrl: article.imageUrl || '',
       tags: article.tags || [],
-      source: article.source || '',
-      sourceUrl: article.sourceUrl || '',
-      featured: article.featured || false,
+      status: article.status || 'draft',
     });
     setShowModal(true);
-  };
-
-  const openDeleteModal = (article) => {
-    setDeletingNews(article);
-    setShowDeleteModal(true);
   };
 
   const closeModal = () => {
     setShowModal(false);
     setEditingNews(null);
-  };
-
-  const closeDeleteModal = () => {
-    setShowDeleteModal(false);
-    setDeletingNews(null);
   };
 
   const handleInputChange = (e) => {
@@ -101,31 +83,26 @@ export default function NewsManager() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.title || !formData.content || !formData.summary || !formData.category) {
+    if (!formData.title || !formData.content || !formData.excerpt) {
       toast.error('Please fill in all required fields');
       return;
     }
 
     const newsData = { ...formData };
 
-    let result;
-    if (editingNews) {
-      result = await updateNews(editingNews._id, newsData);
-    } else {
-      result = await createNews(newsData);
-    }
+    const result = editingNews
+      ? await updateNews(editingNews._id, newsData)
+      : await createNews(newsData);
 
     if (result.success) {
       closeModal();
     }
   };
 
-  const handleDelete = async () => {
-    if (!deletingNews) return;
-
-    const result = await deleteNews(deletingNews._id);
+  const handleDelete = async (id) => {
+    const result = await deleteNews(id);
     if (result.success) {
-      closeDeleteModal();
+      setShowDeleteConfirm(null);
     }
   };
 
@@ -133,8 +110,8 @@ export default function NewsManager() {
     const matchesSearch =
       article.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       article.content?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      article.summary?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = filterStatus === 'all' || article.category === filterStatus;
+      article.excerpt?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = filterStatus === 'all' || article.status === filterStatus;
     return matchesSearch && matchesStatus;
   });
 
@@ -171,15 +148,23 @@ export default function NewsManager() {
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-
-        <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)}>
-          <option value="all">All Categories</option>
-          {categories.map((category) => (
-            <option key={category} value={category}>
-              {category.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
-            </option>
+        <div className="filter-buttons">
+          <button
+            className={filterStatus === 'all' ? 'active' : ''}
+            onClick={() => setFilterStatus('all')}
+          >
+            All
+          </button>
+          {statuses.map((status) => (
+            <button
+              key={status}
+              className={filterStatus === status ? 'active' : ''}
+              onClick={() => setFilterStatus(status)}
+            >
+              {status.charAt(0).toUpperCase() + status.slice(1)}
+            </button>
           ))}
-        </select>
+        </div>
       </div>
 
       {/* News Grid */}
@@ -194,7 +179,15 @@ export default function NewsManager() {
           {filteredNews.map((article) => (
             <div key={article._id} className="manager-card">
               <div className="card-header">
-                <div className="card-category">{article.category.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}</div>
+                <div className="card-category">{article.category}</div>
+                <div className="card-actions">
+                  <button onClick={() => openEditModal(article)} title="Edit">
+                    <span className="material-symbols-outlined">edit</span>
+                  </button>
+                  <button onClick={() => setShowDeleteConfirm(article._id)} title="Delete">
+                    <span className="material-symbols-outlined">delete</span>
+                  </button>
+                </div>
               </div>
               {article.imageUrl && (
                 <div className="card-image">
@@ -202,15 +195,15 @@ export default function NewsManager() {
                 </div>
               )}
               <h3>{article.title}</h3>
-              <p>{article.summary}</p>
+              <p>{article.excerpt}</p>
               <div className="card-meta">
-                <span className={`status-badge ${article.featured ? 'status-published' : 'status-draft'}`}>
-                  {article.featured ? 'Featured' : 'Standard'}
+                <span className={`status-badge status-${article.status}`}>
+                  {article.status}
                 </span>
-                {article.source && (
+                {article.author && (
                   <span className="author-badge">
-                    <span className="material-symbols-outlined">link</span>
-                    {article.source}
+                    <span className="material-symbols-outlined">person</span>
+                    {article.author}
                   </span>
                 )}
               </div>
@@ -223,22 +216,6 @@ export default function NewsManager() {
                   ))}
                 </div>
               )}
-              <div className="card-actions">
-                <button
-                  className="btn-icon btn-edit"
-                  onClick={() => openEditModal(article)}
-                  title="Edit article"
-                >
-                  <span className="material-symbols-outlined">edit</span>
-                </button>
-                <button
-                  className="btn-icon btn-delete"
-                  onClick={() => openDeleteModal(article)}
-                  title="Delete article"
-                >
-                  <span className="material-symbols-outlined">delete</span>
-                </button>
-              </div>
             </div>
           ))}
         </div>
@@ -249,21 +226,13 @@ export default function NewsManager() {
         <div className="modal-overlay" onClick={closeModal}>
           <div className="modal-content modal-large" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>
-                <span className="material-symbols-outlined">{editingNews ? 'edit' : 'article'}</span>
-                {editingNews ? 'Edit Article' : 'Publish New Article'}
-              </h3>
-              <button type="button" onClick={closeModal}>
+              <h3>{editingNews ? 'Edit News Article' : 'Publish New Article'}</h3>
+              <button onClick={closeModal}>
                 <span className="material-symbols-outlined">close</span>
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="modal-form">
-              <div className="form-section-title">
-                <span className="material-symbols-outlined">description</span>
-                Article Details
-              </div>
-
+            <form onSubmit={handleSubmit}>
               <div className="form-row">
                 <div className="form-group">
                   <label>
@@ -283,16 +252,15 @@ export default function NewsManager() {
               <div className="form-row">
                 <div className="form-group">
                   <label>
-                    Summary <span className="required">*</span>
+                    Excerpt <span className="required">*</span>
                   </label>
                   <textarea
-                    name="summary"
-                    value={formData.summary}
+                    name="excerpt"
+                    value={formData.excerpt}
                     onChange={handleInputChange}
                     rows="2"
                     required
-                    placeholder="Brief summary of the article (max 500 characters)"
-                    maxLength={500}
+                    placeholder="Brief summary of the article"
                   />
                 </div>
               </div>
@@ -313,63 +281,42 @@ export default function NewsManager() {
                 </div>
               </div>
 
-              <div className="form-section-title">
-                <span className="material-symbols-outlined">settings</span>
-                Publishing Settings
-              </div>
-
               <div className="form-row-2">
                 <div className="form-group">
-                  <label>
-                    Category <span className="required">*</span>
-                  </label>
-                  <select name="category" value={formData.category} onChange={handleInputChange} required>
+                  <label>Category</label>
+                  <select name="category" value={formData.category} onChange={handleInputChange}>
                     {categories.map((cat) => (
                       <option key={cat} value={cat}>
-                        {cat.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')}
+                        {cat}
                       </option>
                     ))}
                   </select>
                 </div>
 
                 <div className="form-group">
-                  <label>Featured Article</label>
-                  <select
-                    name="featured"
-                    value={formData.featured.toString()}
-                    onChange={(e) => setFormData({ ...formData, featured: e.target.value === 'true' })}
-                  >
-                    <option value="false">No</option>
-                    <option value="true">Yes</option>
+                  <label>Status</label>
+                  <select name="status" value={formData.status} onChange={handleInputChange}>
+                    {statuses.map((status) => (
+                      <option key={status} value={status}>
+                        {status.charAt(0).toUpperCase() + status.slice(1)}
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
 
               <div className="form-row-2">
                 <div className="form-group">
-                  <label>Source</label>
+                  <label>Author</label>
                   <input
                     type="text"
-                    name="source"
-                    value={formData.source}
+                    name="author"
+                    value={formData.author}
                     onChange={handleInputChange}
-                    placeholder="e.g., Ghana Ministry of Environment"
+                    placeholder="Article author name"
                   />
                 </div>
 
-                <div className="form-group">
-                  <label>Source URL</label>
-                  <input
-                    type="url"
-                    name="sourceUrl"
-                    value={formData.sourceUrl}
-                    onChange={handleInputChange}
-                    placeholder="https://..."
-                  />
-                </div>
-              </div>
-
-              <div className="form-row">
                 <div className="form-group">
                   <label>Image URL</label>
                   <input
@@ -393,32 +340,39 @@ export default function NewsManager() {
                   />
                 </div>
               </div>
-            </form>
 
+              <div className="modal-actions">
+                <button type="button" onClick={closeModal} className="btn-secondary">
+                  Cancel
+                </button>
+                <button type="submit" className="btn-primary">
+                  {editingNews ? 'Update Article' : 'Publish Article'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete Confirmation */}
+      {showDeleteConfirm && (
+        <div className="modal-overlay" onClick={() => setShowDeleteConfirm(null)}>
+          <div className="modal-content modal-small" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Confirm Delete</h3>
+            </div>
+            <p>Are you sure you want to delete this article? This action cannot be undone.</p>
             <div className="modal-actions">
-              <button type="button" onClick={closeModal}>
-                <span className="material-symbols-outlined">close</span>
+              <button onClick={() => setShowDeleteConfirm(null)} className="btn-secondary">
                 Cancel
               </button>
-              <button type="submit" onClick={handleSubmit}>
-                <span className="material-symbols-outlined">{editingNews ? 'save' : 'publish'}</span>
-                {editingNews ? 'Save Changes' : 'Publish Article'}
+              <button onClick={() => handleDelete(showDeleteConfirm)} className="btn-delete">
+                Delete
               </button>
             </div>
           </div>
         </div>
       )}
-
-      {/* Delete Confirmation Modal */}
-      <ConfirmationModal
-        isOpen={showDeleteModal}
-        onClose={closeDeleteModal}
-        onConfirm={handleDelete}
-        title="Delete News Article"
-        message={`Are you sure you want to delete "${deletingNews?.title}"? This action cannot be undone.`}
-        confirmText="Delete Article"
-        isDeleting={newsLoading}
-      />
     </div>
   );
 }

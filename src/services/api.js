@@ -59,11 +59,11 @@ api.interceptors.response.use(
       originalRequest._retryCount = 0;
     }
 
-    if (error.response?.status === 429 && originalRequest._retryCount < 2) {
+    if (error.response?.status === 429 && originalRequest._retryCount < 5) {
       originalRequest._retryCount += 1;
-      const retryDelay = Math.pow(3, originalRequest._retryCount) * 2000; // 6s, 18s (longer delays)
+      const retryDelay = Math.pow(2, originalRequest._retryCount) * 1000; // 2s, 4s, 8s, 16s, 32s
 
-      console.log(`⚠️ Rate limited (429). Retrying in ${retryDelay / 1000}s... (Attempt ${originalRequest._retryCount}/2)`);
+      console.log(`⚠️ Rate limited (429). Retrying in ${retryDelay / 1000}s... (Attempt ${originalRequest._retryCount}/5)`);
 
       await new Promise((resolve) => setTimeout(resolve, retryDelay));
       return api(originalRequest);
