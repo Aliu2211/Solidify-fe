@@ -141,6 +141,22 @@ const useAuthStore = create(
         }
       },
 
+      updateProfile: async (profileData) => {
+        set({ isLoading: true, error: null });
+        try {
+          const response = await authService.updateProfile(profileData);
+          const user = response.data;
+          storage.setUser(user);
+          set({ user, isLoading: false, error: null });
+          handleApiSuccess('Profile updated successfully!');
+          return { success: true, user };
+        } catch (error) {
+          const errorMessage = handleApiError(error);
+          set({ isLoading: false, error: errorMessage });
+          return { success: false, error: errorMessage };
+        }
+      },
+
       clearError: () => set({ error: null }),
     }),
     {
