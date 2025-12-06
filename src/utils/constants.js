@@ -42,6 +42,7 @@ export const API_ENDPOINTS = {
   FORGOT_PASSWORD: '/auth/forgot-password',
   RESET_PASSWORD: '/auth/reset-password',
   ME: '/auth/me',
+  PROFILE: '/auth/profile',
   GET_ORGANIZATIONS: '/auth/organizations',
 
   // Carbon Tracking
