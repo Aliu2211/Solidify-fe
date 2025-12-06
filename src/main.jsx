@@ -37,11 +37,13 @@ import NewsSection from "./components/NewsSection.jsx";
 import NewsDetail from "./components/NewsDetail.jsx";
 import Sustainability from "./components/Sustainability.jsx";
 import LibrarySection from "./components/LibrarySection.jsx";
+import LibraryDetail from "./components/LibraryDetail.jsx";
 import Chat from "./components/Chat.jsx";
 import FindSME from "./components/FindSME.jsx";
 import Settings from "./components/Settings.jsx";
 import ProtectedRoute from "./components/common/ProtectedRoute.jsx";
 import AdminGuard from "./components/common/AdminGuard.jsx";
+import SocketManager from "./components/common/SocketManager.jsx";
 import NotFound from "./components/NotFound.jsx";
 
 // Admin Components
@@ -79,6 +81,7 @@ createRoot(document.getElementById("root")).render(
         },
       }}
     />
+    <SocketManager />
     <Routes>
       <Route path="/" element={<WelcomePage />} />
       <Route path="/login" element={<LoginPage />} />
@@ -140,6 +143,14 @@ createRoot(document.getElementById("root")).render(
         element={
           <ProtectedRoute>
             <LibrarySection />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/library/:id"
+        element={
+          <ProtectedRoute>
+            <LibraryDetail />
           </ProtectedRoute>
         }
       />

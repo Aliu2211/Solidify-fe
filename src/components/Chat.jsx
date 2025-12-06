@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import { Header } from "./Header";
 import { Profile } from "./Profile";
 import { Body } from "./Dashboard";
@@ -18,9 +19,12 @@ export default function Chat() {
     sendMessage,
     setCurrentConversation,
     markAsRead,
+    addMessage,
+    addConversation,
   } = useChatStore();
 
   const { user } = useAuthStore();
+  const location = useLocation();
   const [messageInput, setMessageInput] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -36,28 +40,17 @@ export default function Chat() {
 
   // Fetch conversations on mount
   useEffect(() => {
-    fetchConversations();
-  }, [fetchConversations]);
-
-  // Poll for new conversations and unread counts every 30 seconds
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      fetchConversations();
-    }, 30000); // Refresh every 30 seconds to reduce API calls
-
-    return () => clearInterval(intervalId);
-  }, [fetchConversations]);
-
-  // Poll for new messages every 3 seconds
-  useEffect(() => {
-    if (!currentConversation) return;
-
-    const intervalId = setInterval(() => {
-      fetchMessages(currentConversation._id);
-    }, 3000);
-
-    return () => clearInterval(intervalId);
-  }, [currentConversation, fetchMessages]);
+    const initChat = async () => {
+      const convs = await fetchConversations();
+      if (location.state?.conversationId && convs) {
+        const target = convs.find(c => c._id === location.state.conversationId);
+        if (target) {
+          setCurrentConversation(target);
+        }
+      }
+    };
+    initChat();
+  }, [fetchConversations, location.state]);
 
   // Fetch messages when conversation changes
   useEffect(() => {

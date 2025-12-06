@@ -168,6 +168,63 @@ const useChatStore = create((set, get) => ({
     const total = conversations.reduce((total, conv) => total + (conv.unreadCount || 0), 0);
     return total;
   },
+
+  // Socket Actions
+  addMessage: (message) => {
+    const state = get();
+    const { currentConversation, conversations } = state;
+
+    // Normalize conversation IDs to strings for comparison
+    const msgConvId = typeof message.conversation === 'object' 
+      ? message.conversation._id 
+      : message.conversation;
+      
+    const currentConvId = currentConversation?._id;
+
+    console.log('Socket Message Received:', { 
+      msgId: message._id, 
+      msgConvId, 
+      currentConvId,
+      match: msgConvId === currentConvId 
+    });
+
+    // 1. If message belongs to current conversation, add it to messages
+    if (currentConvId && msgConvId === currentConvId) {
+      // Check if message already exists (to avoid duplicates)
+      const exists = state.messages.some(m => m._id === message._id);
+      if (!exists) {
+        set({ messages: [...state.messages, message] });
+      }
+    }
+
+    // 2. Update conversation list (last message, unread count)
+    const updatedConversations = conversations.map(conv => {
+      if (conv._id === msgConvId) {
+        const isCurrent = currentConvId === conv._id;
+        return {
+          ...conv,
+          lastMessage: message,
+          updatedAt: message.createdAt,
+          unreadCount: isCurrent ? 0 : (conv.unreadCount || 0) + 1
+        };
+      }
+      return conv;
+    });
+
+    // Sort conversations by updated date
+    updatedConversations.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+
+    set({ conversations: updatedConversations });
+  },
+
+  addConversation: (conversation) => {
+    const state = get();
+    // Check if already exists
+    const exists = state.conversations.some(c => c._id === conversation._id);
+    if (!exists) {
+      set({ conversations: [conversation, ...state.conversations] });
+    }
+  },
 }));
 
 export default useChatStore;
