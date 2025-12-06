@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import useAdminStore from '../../stores/adminStore';
 import LoadingSpinner from '../common/LoadingSpinner';
+import ConfirmationModal from '../common/ConfirmationModal';
 import toast from 'react-hot-toast';
 
 /**
@@ -11,7 +12,9 @@ export default function CourseManager() {
   const { courses, coursesLoading, fetchCourses, createCourse, updateCourse, deleteCourse } = useAdminStore();
 
   const [showModal, setShowModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [editingCourse, setEditingCourse] = useState(null);
+  const [deletingCourse, setDeletingCourse] = useState(null);
   const [filterLevel, setFilterLevel] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -21,7 +24,6 @@ export default function CourseManager() {
     content: '',
     level: 1,
     orderInLevel: 1,
-    duration: 60,
     thumbnail: '',
     slug: '', // Added slug field
     completionCriteria: {
@@ -53,7 +55,6 @@ export default function CourseManager() {
         content: '',
         level: 1,
         orderInLevel: 1,
-        duration: 60,
         thumbnail: '',
         slug: '', // Added slug field
         completionCriteria: {
@@ -114,9 +115,18 @@ export default function CourseManager() {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this course?')) {
-      await deleteCourse(id);
+  const handleDelete = (course) => {
+    setDeletingCourse(course);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!deletingCourse) return;
+    
+    const result = await deleteCourse(deletingCourse._id);
+    if (result.success) {
+      setShowDeleteModal(false);
+      setDeletingCourse(null);
     }
   };
 
@@ -192,10 +202,6 @@ export default function CourseManager() {
                 <p className="card-description">{course.description}</p>
                 <div className="card-meta">
                   <span>
-                    <span className="material-symbols-outlined">schedule</span>
-                    {course.duration} mins
-                  </span>
-                  <span>
                     <span className="material-symbols-outlined">sort</span>
                     Order: {course.orderInLevel}
                   </span>
@@ -205,7 +211,7 @@ export default function CourseManager() {
                     <span className="material-symbols-outlined">edit</span>
                     Edit
                   </button>
-                  <button className="btn-delete" onClick={() => handleDelete(course._id)}>
+                  <button className="btn-delete" onClick={() => handleDelete(course)}>
                     <span className="material-symbols-outlined">delete</span>
                     Delete
                   </button>
@@ -221,6 +227,16 @@ export default function CourseManager() {
           <p>Create your first course to get started</p>
         </div>
       )}
+
+      <ConfirmationModal
+        isOpen={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onConfirm={confirmDelete}
+        title="Delete Course"
+        message={`Are you sure you want to delete "${deletingCourse?.title}"? This action cannot be undone.`}
+        confirmText="Delete Course"
+        isDeleting={coursesLoading}
+      />
 
       {/* Modal */}
       {showModal && (
@@ -290,18 +306,12 @@ export default function CourseManager() {
                 </div>
 
                 <div className="form-group">
-                  <label>Duration (minutes) *</label>
-                  <input
-                    type="number"
-                    value={formData.duration}
-                    onChange={(e) => setFormData({ ...formData, duration: parseInt(e.target.value) })}
-                    min="1"
-                    required
-                  />
-                </div>
-
-                <div className="form-group">
-                  <label>Order in Level *</label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    Order in Level *
+                    <span title="Determines the sequence of courses within a level (e.g., 1 for first course, 2 for second)" style={{ cursor: 'help', color: '#666', display: 'flex' }}>
+                      <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>help</span>
+                    </span>
+                  </label>
                   <input
                     type="number"
                     value={formData.orderInLevel}

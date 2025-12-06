@@ -272,6 +272,59 @@ class AdminService {
   }
 
   // ============================================
+  // USER MANAGEMENT (Admin Only)
+  // ============================================
+
+  /**
+   * Get all users with optional filtering
+   */
+  async getUsers(params = {}) {
+    return await requestQueue.enqueue(async () => {
+      const queryString = new URLSearchParams(params).toString();
+      const response = await api.get(`/users${queryString ? `?${queryString}` : ''}`);
+      return response.data;
+    });
+  }
+
+  /**
+   * Get user statistics
+   */
+  async getUserStats() {
+    return await requestQueue.enqueue(async () => {
+      const response = await api.get('/users/stats');
+      return response.data;
+    });
+  }
+
+  /**
+   * Get user by ID
+   */
+  async getUserById(userId) {
+    const response = await api.get(`/users/${userId}`);
+    return response.data;
+  }
+
+  /**
+   * Update a user
+   */
+  async updateUser(userId, userData) {
+    return await requestQueue.enqueue(async () => {
+      const response = await api.put(`/users/${userId}`, userData);
+      return response.data;
+    });
+  }
+
+  /**
+   * Delete a user
+   */
+  async deleteUser(userId) {
+    return await requestQueue.enqueue(async () => {
+      const response = await api.delete(`/users/${userId}`);
+      return response.data;
+    });
+  }
+
+  // ============================================
   // HELPER METHODS
   // ============================================
 
@@ -282,6 +335,11 @@ class AdminService {
   async getDashboardStats() {
     try {
       console.log('📊 Fetching dashboard stats sequentially to avoid rate limiting...');
+
+      // Fetch user stats first
+      const userStats = await this.getUserStats();
+      console.log('✓ User stats fetched');
+      await new Promise(resolve => setTimeout(resolve, 2000)); // 2s delay
 
       // Fetch sequentially with delays between requests (increased to 2 seconds to avoid rate limiting)
       const courses = await this.getCourses({ limit: 1 });
@@ -300,6 +358,10 @@ class AdminService {
       console.log('✓ Organizations fetched');
 
       const stats = {
+        totalUsers: userStats.data?.totalUsers || 0,
+        usersByRole: userStats.data?.byRole || { user: 0, manager: 0, admin: 0 },
+        verifiedUsers: userStats.data?.verified || 0,
+        recentRegistrations: userStats.data?.recentRegistrations || 0,
         totalCourses: courses.data?.pagination?.total || 0,
         totalResources: resources.data?.pagination?.total || 0,
         totalNews: news.data?.pagination?.total || 0,
@@ -311,6 +373,10 @@ class AdminService {
     } catch (error) {
       console.error('❌ Error fetching dashboard stats:', error);
       return {
+        totalUsers: 0,
+        usersByRole: { user: 0, manager: 0, admin: 0 },
+        verifiedUsers: 0,
+        recentRegistrations: 0,
         totalCourses: 0,
         totalResources: 0,
         totalNews: 0,
