@@ -24,6 +24,7 @@ export default function CourseManager() {
     content: '',
     level: 1,
     orderInLevel: 1,
+    duration: 5, // duration in minutes (must be >= 1)
     thumbnail: '',
     slug: '', // Added slug field
     completionCriteria: {
@@ -55,6 +56,7 @@ export default function CourseManager() {
         content: '',
         level: 1,
         orderInLevel: 1,
+        duration: 5, // default duration (minutes)
         thumbnail: '',
         slug: '', // Added slug field
         completionCriteria: {
@@ -98,11 +100,33 @@ export default function CourseManager() {
       }
     }
 
+    // Client-side validation
+    const durationValue = parseInt(formData.duration);
+    if (!durationValue || durationValue < 1) {
+      toast.dismiss('course-request');
+      toast.error('Please enter a valid duration (minimum 1 minute)');
+      return;
+    }
+
+    if (formData.thumbnail && formData.thumbnail.trim() !== '') {
+      try {
+        // Validate URL - will throw if invalid
+        new URL(formData.thumbnail);
+      } catch (err) {
+        toast.dismiss('course-request');
+        toast.error('Please provide a valid thumbnail URL (must start with http:// or https://)');
+        return;
+      }
+    }
+
     // Construct courseData with slug at the beginning to ensure it's processed first
     const courseData = {
       slug,
       ...formData,
     };
+
+    // Avoid sending empty thumbnail string which may be considered invalid by backend
+    if (courseData.thumbnail === '') delete courseData.thumbnail;
 
     const result = editingCourse
       ? await updateCourse(editingCourse._id, courseData)
@@ -301,6 +325,17 @@ export default function CourseManager() {
                     onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                     rows="6"
                     placeholder="Course content in markdown or HTML..."
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Duration (minutes) *</label>
+                  <input
+                    type="number"
+                    value={formData.duration}
+                    onChange={(e) => setFormData({ ...formData, duration: Math.max(1, parseInt(e.target.value || '0')) })}
+                    min="1"
                     required
                   />
                 </div>
