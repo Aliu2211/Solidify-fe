@@ -59,7 +59,19 @@ const libraryService = {
   // Download a resource (get download URL - increments download count)
   async downloadResource(id) {
     const response = await api.get(`/library/resources/${id}/download`);
-    return response.data;
+    // Normalize response so callers can always use data.downloadUrl
+    const payload = response.data || {};
+    const inner = payload.data || {};
+    const downloadUrl = inner.fileUrl || inner.downloadUrl || payload.fileUrl || payload.downloadUrl || null;
+    return {
+      success: payload.success,
+      message: payload.message,
+      data: {
+        downloadUrl,
+        fileName: inner.fileName || payload.fileName || null,
+        fileType: inner.fileType || payload.fileType || null,
+      },
+    };
   },
 };
 

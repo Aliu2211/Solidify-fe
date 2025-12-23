@@ -278,11 +278,15 @@ function ResourceCard({ resource, isSaved }) {
     e.stopPropagation();
     if (isDownloading) return;
 
-    if (resource.type === "pdf" && resource.downloadUrl) {
+    if (resource.type === "pdf") {
       setIsDownloading(true);
       try {
-        await downloadResource(resource._id, `${resource.title}.pdf`);
-        toast.success("📥 Download started");
+        const response = await downloadResource(resource._id);
+        if (response.success) {
+          toast.success("📥 Download started");
+        } else {
+          toast.error(response.message || "Download failed");
+        }
       } catch (error) {
         toast.error("Download failed");
       } finally {

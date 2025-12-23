@@ -420,12 +420,13 @@ function ResourceCard({ resource, isSaved }) {
             visibility
           </span>
         </button>
-        {resource.type === "pdf" && resource.downloadUrl && (
+        {resource.type === "pdf" && (
           <button
             className={`resource-download-btn ${isDownloading ? "loading" : ""}`}
             onClick={handleDownload}
             disabled={isDownloading}
             style={{ borderColor: getTypeColor(), color: getTypeColor() }}
+            title={resource.downloadUrl ? "Download" : "Get download"}
           >
             <span className="material-symbols-outlined">
               {isDownloading ? "downloading" : "download"}

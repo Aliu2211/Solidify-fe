@@ -173,9 +173,10 @@ const useLibraryStore = create((set, get) => ({
     set({ error: null });
     try {
       const response = await libraryService.downloadResource(id);
-      if (response.success && response.data.downloadUrl) {
+      const downloadUrl = response?.data?.downloadUrl || response?.data?.fileUrl || null;
+      if (response.success && downloadUrl) {
         // Open download URL in new tab or trigger download
-        window.open(response.data.downloadUrl, "_blank", "noopener,noreferrer");
+        window.open(downloadUrl, "_blank", "noopener,noreferrer");
         return response;
       } else {
         set({ error: response.message || "Download URL not available" });
