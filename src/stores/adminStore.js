@@ -140,8 +140,26 @@ const useAdminStore = create((set, get) => ({
         return { success: true, data: response.data };
       } else {
         set({ error: response.message, coursesLoading: false });
+        // If backend complains about missing slug, retry once with a generated unique slug
+        const apiErrors = response.errors || [];
+        if (apiErrors.includes('Slug is required')) {
+          try {
+            const uniqueSlug = (courseData.slug || 'course') + '-' + Date.now();
+            console.warn('🔧 Retrying createCourse with generated slug:', uniqueSlug);
+            const retryResponse = await adminService.createCourse({ ...courseData, slug: uniqueSlug });
+            if (retryResponse.success) {
+              handleApiSuccess('Course created successfully after slug generation');
+              await get().fetchCourses({}, true);
+              return { success: true, data: retryResponse.data };
+            }
+            // Fall through to return original error if retry didn't succeed
+          } catch (err) {
+            console.error('Retry createCourse failed', err);
+          }
+        }
+
         // Forward validation errors from API if present
-        return { success: false, message: response.message, errors: response.errors || [] };
+        return { success: false, message: response.message, errors: apiErrors };
       }
     } catch (error) {
       const errorMsg = handleApiError(error);
