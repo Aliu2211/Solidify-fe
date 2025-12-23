@@ -1,6 +1,19 @@
 import { create } from "zustand";
 import libraryService from "../services/library.service";
 
+// Normalize backend resource to front-end shape
+function normalizeResource(r) {
+  if (!r) return r;
+  const downloadUrl = r.downloadUrl || r.fileUrl || null;
+  const type = r.type || r.fileType || (r.fileUrl ? (r.fileUrl.split('.').pop() === 'pdf' ? 'pdf' : 'article') : 'article');
+  return {
+    ...r,
+    type,
+    downloadUrl,
+    thumbnail: r.thumbnail || r.thumbnailUrl || r.thumbnailUrl || null,
+  };
+}
+
 const useLibraryStore = create((set, get) => ({
   // State
   resources: [],
@@ -18,7 +31,8 @@ const useLibraryStore = create((set, get) => ({
     try {
       const response = await libraryService.getAllResources(params);
       if (response.success) {
-        set({ resources: response.data, isLoading: false });
+        const normalized = Array.isArray(response.data) ? response.data.map(normalizeResource) : [];
+        set({ resources: normalized, isLoading: false });
       } else {
         set({ error: response.message, isLoading: false });
       }
@@ -36,8 +50,9 @@ const useLibraryStore = create((set, get) => ({
     try {
       const response = await libraryService.getResourceById(id);
       if (response.success) {
-        set({ currentResource: response.data, isLoading: false });
-        return response.data;
+        const normalized = normalizeResource(response.data);
+        set({ currentResource: normalized, isLoading: false });
+        return normalized;
       } else {
         set({ error: response.message, isLoading: false });
         return null;
@@ -74,7 +89,7 @@ const useLibraryStore = create((set, get) => ({
     try {
       const response = await libraryService.getPopularResources(limit);
       if (response.success) {
-        set({ popularResources: response.data });
+        set({ popularResources: Array.isArray(response.data) ? response.data.map(normalizeResource) : [] });
       } else {
         set({ error: response.message });
       }
@@ -91,7 +106,7 @@ const useLibraryStore = create((set, get) => ({
     try {
       const response = await libraryService.getRecommendedResources(limit);
       if (response.success) {
-        set({ recommendedResources: response.data });
+        set({ recommendedResources: Array.isArray(response.data) ? response.data.map(normalizeResource) : [] });
       } else {
         set({ error: response.message });
       }
@@ -154,8 +169,9 @@ const useLibraryStore = create((set, get) => ({
     try {
       const response = await libraryService.getMyFavorites();
       if (response.success) {
-        set({ savedResources: response.data });
-        return response.data;
+        const normalized = Array.isArray(response.data) ? response.data.map(normalizeResource) : [];
+        set({ savedResources: normalized });
+        return normalized;
       } else {
         set({ error: response.message });
         return [];
