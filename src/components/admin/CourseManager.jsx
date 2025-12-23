@@ -47,7 +47,11 @@ export default function CourseManager() {
   const handleOpenModal = (course = null) => {
     if (course) {
       setEditingCourse(course);
-      setFormData(course);
+      setFormData({
+        ...course,
+        duration: course.duration || 5,
+        completionCriteria: course.completionCriteria || { type: 'read', passingScore: 0, requiredTime: 0 },
+      });
     } else {
       setEditingCourse(null);
       setFormData({
