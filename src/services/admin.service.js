@@ -36,7 +36,9 @@ class AdminService {
    */
   async createCourse(courseData) {
     return await requestQueue.enqueue(async () => {
+      if (import.meta.env.DEV) console.debug('📤 createCourse payload:', courseData);
       const response = await api.post(API_ENDPOINTS.ADMIN_COURSES, courseData);
+      if (import.meta.env.DEV) console.debug('📥 createCourse response:', response.data);
       return response.data;
     });
   }
