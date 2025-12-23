@@ -36,16 +36,11 @@ class AdminService {
    */
   async createCourse(courseData) {
     return await requestQueue.enqueue(async () => {
-      // Debug logs (always enabled temporarily to trace production issues)
-      try {
-        console.info('📤 createCourse payload:', courseData);
-        const response = await api.post(API_ENDPOINTS.ADMIN_COURSES, courseData);
-        console.info('📥 createCourse response:', response.data);
-        return response.data;
-      } catch (err) {
-        console.error('🛑 createCourse error response:', err?.response?.data || err);
-        throw err;
-      }
+      // Keep lightweight dev-only debug logs; avoid noisy production logs
+      if (import.meta.env.DEV) console.debug('📤 createCourse payload:', courseData);
+      const response = await api.post(API_ENDPOINTS.ADMIN_COURSES, courseData);
+      if (import.meta.env.DEV) console.debug('📥 createCourse response:', response.data);
+      return response.data;
     });
   }
 
