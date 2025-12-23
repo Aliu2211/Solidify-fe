@@ -123,10 +123,14 @@ export default function CourseManager() {
       }
     }
 
-    // Construct courseData with slug at the beginning to ensure it's processed first
+    // Ensure generated slug isn't overwritten by an empty form field
+    slug = (slug || '').toString().trim();
+    if (!slug) slug = 'course-' + Date.now();
+
+    // Construct courseData ensuring slug from above takes precedence
     const courseData = {
-      slug,
       ...formData,
+      slug,
     };
 
     // Avoid sending empty thumbnail string which may be considered invalid by backend
@@ -142,7 +146,9 @@ export default function CourseManager() {
       toast.success(editingCourse ? 'Course updated successfully' : 'Course created successfully');
       handleCloseModal();
     } else {
-      toast.error(result.message || 'Failed to create/update course');
+      // Show detailed validation errors if provided by the API
+      const extra = Array.isArray(result.errors) ? `: ${result.errors.join(', ')}` : '';
+      toast.error((result.message || 'Failed to create/update course') + extra);
     }
   };
 
