@@ -139,7 +139,10 @@ export default function CourseManager() {
     toast.dismiss('course-request');
 
     if (result.success) {
+      toast.success(editingCourse ? 'Course updated successfully' : 'Course created successfully');
       handleCloseModal();
+    } else {
+      toast.error(result.message || 'Failed to create/update course');
     }
   };
 
