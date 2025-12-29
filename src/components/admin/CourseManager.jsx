@@ -24,6 +24,7 @@ export default function CourseManager() {
     content: '',
     level: 1,
     orderInLevel: 1,
+    duration: 5, // duration in minutes (must be >= 1)
     thumbnail: '',
     slug: '', // Added slug field
     completionCriteria: {
@@ -46,7 +47,11 @@ export default function CourseManager() {
   const handleOpenModal = (course = null) => {
     if (course) {
       setEditingCourse(course);
-      setFormData(course);
+      setFormData({
+        ...course,
+        duration: course.duration || 5,
+        completionCriteria: course.completionCriteria || { type: 'read', passingScore: 0, requiredTime: 0 },
+      });
     } else {
       setEditingCourse(null);
       setFormData({
@@ -55,6 +60,7 @@ export default function CourseManager() {
         content: '',
         level: 1,
         orderInLevel: 1,
+        duration: 5, // default duration (minutes)
         thumbnail: '',
         slug: '', // Added slug field
         completionCriteria: {
@@ -98,11 +104,37 @@ export default function CourseManager() {
       }
     }
 
-    // Construct courseData with slug at the beginning to ensure it's processed first
+    // Client-side validation
+    const durationValue = parseInt(formData.duration);
+    if (!durationValue || durationValue < 1) {
+      toast.dismiss('course-request');
+      toast.error('Please enter a valid duration (minimum 1 minute)');
+      return;
+    }
+
+    if (formData.thumbnail && formData.thumbnail.trim() !== '') {
+      try {
+        // Validate URL - will throw if invalid
+        new URL(formData.thumbnail);
+      } catch (err) {
+        toast.dismiss('course-request');
+        toast.error('Please provide a valid thumbnail URL (must start with http:// or https://)');
+        return;
+      }
+    }
+
+    // Ensure generated slug isn't overwritten by an empty form field
+    slug = (slug || '').toString().trim();
+    if (!slug) slug = 'course-' + Date.now();
+
+    // Construct courseData ensuring slug from above takes precedence
     const courseData = {
-      slug,
       ...formData,
+      slug,
     };
+
+    // Avoid sending empty thumbnail string which may be considered invalid by backend
+    if (courseData.thumbnail === '') delete courseData.thumbnail;
 
     const result = editingCourse
       ? await updateCourse(editingCourse._id, courseData)
@@ -111,7 +143,12 @@ export default function CourseManager() {
     toast.dismiss('course-request');
 
     if (result.success) {
+      toast.success(editingCourse ? 'Course updated successfully' : 'Course created successfully');
       handleCloseModal();
+    } else {
+      // Show detailed validation errors if provided by the API
+      const extra = Array.isArray(result.errors) ? `: ${result.errors.join(', ')}` : '';
+      toast.error((result.message || 'Failed to create/update course') + extra);
     }
   };
 
@@ -301,6 +338,17 @@ export default function CourseManager() {
                     onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                     rows="6"
                     placeholder="Course content in markdown or HTML..."
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Duration (minutes) *</label>
+                  <input
+                    type="number"
+                    value={formData.duration}
+                    onChange={(e) => setFormData({ ...formData, duration: Math.max(1, parseInt(e.target.value || '0')) })}
+                    min="1"
                     required
                   />
                 </div>

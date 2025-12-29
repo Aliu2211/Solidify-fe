@@ -140,7 +140,8 @@ const useAdminStore = create((set, get) => ({
         return { success: true, data: response.data };
       } else {
         set({ error: response.message, coursesLoading: false });
-        return { success: false, message: response.message };
+        // Forward validation errors from API if present
+        return { success: false, message: response.message, errors: response.errors || [] };
       }
     } catch (error) {
       const errorMsg = handleApiError(error);
@@ -160,7 +161,8 @@ const useAdminStore = create((set, get) => ({
         return { success: true, data: response.data };
       } else {
         set({ error: response.message, coursesLoading: false });
-        return { success: false, message: response.message };
+        // Forward validation errors from API if present
+        return { success: false, message: response.message, errors: response.errors || [] };
       }
     } catch (error) {
       const errorMsg = handleApiError(error);
