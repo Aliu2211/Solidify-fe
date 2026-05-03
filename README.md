@@ -285,7 +285,7 @@ See the `LICENSE` file for details.
 
 | Name                         | GitHub Profile                                     | Role                             |
 | ---------------------------- | -------------------------------------------------- | -------------------------------- |
-| **Aliu Abdul-Lateef**        | [github.com/Aliu2211](https://github.com/Aliu2211) | Project Lead / Backend Developer |
+| **Aliu Tijani**        | [github.com/Aliu2211](https://github.com/Aliu2211) | Project Lead / Backend Developer |
 | **Graham Kyeremanteng**      | [github.com/kyerrman](https://github.com/kyerrman) | Frontend Developer               |
 | **Jehiel Britstot Houmanou** | [github.com/jaymannn](https://github.com/jaymannn) | Frontend Developer / UI designer |
 
